@@ -9,11 +9,13 @@ import android.view.MenuItem;
 
 public class MainActivity extends ActionBarActivity {
 
+    private static final String TAG = "TEST";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d("TEST", "Test logging message");
+        Log.d(TAG, "Test logging message");
     }
 
 
