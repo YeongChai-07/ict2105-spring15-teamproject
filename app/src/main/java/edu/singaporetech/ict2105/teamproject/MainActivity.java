@@ -40,4 +40,11 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+    
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Emit LogCat message
+        Log.i(TAG, "Entered the onDestroy() method");
+    }
 }
