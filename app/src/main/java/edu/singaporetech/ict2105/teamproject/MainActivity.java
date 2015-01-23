@@ -16,6 +16,13 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d(TAG, "Test logging message");
+
+        // Xing Yi - Friday, 23 Jan 2015
+        // Has previous state been saved?
+        if (savedInstanceState != null) {
+            Log.d(TAG, "savedInstanceState is not NULL");
+        }
+        // End Xing Yi
     }
 
 
