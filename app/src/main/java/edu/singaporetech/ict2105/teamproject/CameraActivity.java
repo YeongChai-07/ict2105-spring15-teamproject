@@ -18,11 +18,12 @@ import java.util.Date;
 
 public class CameraActivity extends ActionBarActivity {
 
-    private static final String TAG = "TEST";
+    private static final String TAG = "Camera_Test";
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
-    public static final int MEDIA_TYPE_IMAGE = 1;
 
     private Uri fileUri;
+
+    public static final int MEDIA_TYPE_IMAGE = 1;
 
     /** Create a file Uri for saving an image or video */
     private static Uri getOutputMediaFileUri(int type){
@@ -53,9 +54,10 @@ public class CameraActivity extends ActionBarActivity {
         if (type == MEDIA_TYPE_IMAGE){
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
                     "IMG_"+ timeStamp + ".jpg");
-        }  else {
+        } else {
             return null;
         }
+
         return mediaFile;
     }
 
@@ -63,7 +65,7 @@ public class CameraActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
-        Log.d(TAG, "Test logging message");
+        Log.d(TAG, "CameraActivity logging message");
         if (savedInstanceState != null) {
             Log.d(TAG, "savedInstanceState is not NULL");
         }
@@ -75,7 +77,7 @@ public class CameraActivity extends ActionBarActivity {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
                 // method to create a file to save the image
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+                //intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
                 // set the image file name
                 startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
             }
@@ -115,17 +117,32 @@ public class CameraActivity extends ActionBarActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "Entered onActivityResult method");
+
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
+                Log.d(TAG, "Trying to save image!");
                 // Image captured and saved to fileUri specified in the Intent
-                Toast.makeText(this, "Image saved to:\n" +
+                Toast.makeText(getApplicationContext(), "Image saved to:\n" +
                         data.getData(), Toast.LENGTH_LONG).show();
             } else if (resultCode == RESULT_CANCELED) {
                 // User cancelled the image capture
             } else {
                 // Image capture failed, advise user
-                Log.d(TAG, "Image capture failed!!");
             }
         }
+
+//        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+//            if (resultCode == RESULT_OK) {
+//                Log.d(TAG, "Trying to save image!");
+//                // Image captured and saved to fileUri specified in the Intent
+//                Toast.makeText(this, "Image saved to:\n" +
+//                        data.getData(), Toast.LENGTH_LONG).show();
+//            } else if (resultCode == RESULT_CANCELED) {
+//                // User cancelled the image capture
+//            } else {
+//                // Image capture failed, advise user
+//                Log.d(TAG, "Image capture failed!!");
+//            }
+//        }
     }
 }
