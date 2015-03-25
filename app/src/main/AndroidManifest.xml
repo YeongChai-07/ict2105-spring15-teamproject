@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="edu.singaporetech.ict2105.teamproject" >
+    package="com.example.insite.app" >
 
     <application
         android:allowBackup="true"

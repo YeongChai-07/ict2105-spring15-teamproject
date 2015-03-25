@@ -1,4 +1,4 @@
-package edu.singaporetech.ict2105.teamproject;
+package com.example.insite.app;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
