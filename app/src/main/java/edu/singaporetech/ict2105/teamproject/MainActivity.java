@@ -1,14 +1,10 @@
 package edu.singaporetech.ict2105.teamproject;
 
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -27,17 +23,6 @@ public class MainActivity extends ActionBarActivity {
             Log.d(TAG, "savedInstanceState is not NULL");
         }
         // End Xing Yi
-
-        Button launchActivityTwoButton = (Button) findViewById(R.id.cameraActivity);
-        launchActivityTwoButton.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(getApplicationContext(), CameraActivity.class);
-                startActivity(intent);
-            }
-        });
     }
 
 
@@ -62,7 +47,7 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
+    
     @Override
     public void onDestroy() {
         super.onDestroy();

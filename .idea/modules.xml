@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ict2105-spring15-teamproject.iml" filepath="$PROJECT_DIR$/ict2105-spring15-teamproject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/teamproject.iml" filepath="$PROJECT_DIR$/teamproject.iml" />
     </modules>
   </component>
 </project>
