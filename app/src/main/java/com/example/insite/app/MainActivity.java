@@ -8,13 +8,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import java.util.Locale;
 
@@ -163,6 +163,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         //TextView tvSectionLabel;
+        private ListView myListView;
+        private String[] strListView;
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -182,17 +184,27 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
             Bundle args = getArguments();
-            ((TextView) rootView.findViewById(R.id.section_label)).setText(
-                    Integer.toString(args.getInt(ARG_SECTION_NUMBER)));
+            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            myListView = (ListView) rootView.findViewById(R.id.listView);
+            if(args.getInt(ARG_SECTION_NUMBER) == 1) {
+                strListView = getResources().getStringArray(R.array.my_data_list);
+            }
+            else if(args.getInt(ARG_SECTION_NUMBER) == 2) {
+                strListView = getResources().getStringArray(R.array.my_data_list2);
+            }
+            ArrayAdapter <String> objectAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, strListView);
+            myListView.setAdapter(objectAdapter);
 
+
+//            Bundle args = getArguments();
+//            ((TextView) rootView.findViewById(R.id.section_label)).setText(
+//                    Integer.toString(args.getInt(ARG_SECTION_NUMBER)));
 
             //tvSectionLabel = (TextView) rootView.findViewById(R.id.section_label);
             //tvSectionLabel.setText("Tab " + Integer.toString(args.getInt(ARG_SECTION_NUMBER)) );
 
-            Log.i("Fragment", Integer.toString(args.getInt(ARG_SECTION_NUMBER)));
+            //Log.i("Fragment", Integer.toString(args.getInt(ARG_SECTION_NUMBER)));
 
             return rootView;
         }
