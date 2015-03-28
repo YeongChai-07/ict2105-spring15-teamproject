@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.Locale;
 
@@ -146,7 +147,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 case 1:
                     return getString(R.string.title_section2).toUpperCase(l);
                 //case 2:
-                    //return getString(R.string.title_section3).toUpperCase(l);
+                //return getString(R.string.title_section3).toUpperCase(l);
             }
             return null;
         }
@@ -185,16 +186,32 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             Bundle args = getArguments();
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            myListView = (ListView) rootView.findViewById(R.id.listView);
-            if(args.getInt(ARG_SECTION_NUMBER) == 1) {
-                strListView = getResources().getStringArray(R.array.my_data_list);
-            }
-            else if(args.getInt(ARG_SECTION_NUMBER) == 2) {
+            View rootView = null;
+            if (args.getInt(ARG_SECTION_NUMBER) == 1) {
+                //strListView = getResources().getStringArray(R.array.my_data_list);
+                rootView = inflater.inflate(R.layout.pending_list, container, false);
+                ((TextView) rootView.findViewById(R.id.section_label)).setText(
+                        Integer.toString(args.getInt(ARG_SECTION_NUMBER)));
+            } else if (args.getInt(ARG_SECTION_NUMBER) == 2) {
+                rootView = inflater.inflate(R.layout.fragment_main, container, false);
+                myListView = (ListView) rootView.findViewById(R.id.listView);
                 strListView = getResources().getStringArray(R.array.my_data_list2);
+                ArrayAdapter<String> objectAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, strListView);
+                myListView.setAdapter(objectAdapter);
             }
-            ArrayAdapter <String> objectAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, strListView);
-            myListView.setAdapter(objectAdapter);
+            return rootView;
+//            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+//            ((TextView) rootView.findViewById(R.id.section_label)).setText(
+//                    Integer.toString(args.getInt(ARG_SECTION_NUMBER)));
+//            myListView = (ListView) rootView.findViewById(R.id.listView);
+//            if(args.getInt(ARG_SECTION_NUMBER) == 1) {
+//                strListView = getResources().getStringArray(R.array.my_data_list);
+//            }
+//            else if(args.getInt(ARG_SECTION_NUMBER) == 2) {
+//                strListView = getResources().getStringArray(R.array.my_data_list2);
+//            }
+//            ArrayAdapter <String> objectAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, strListView);
+//            myListView.setAdapter(objectAdapter);
 
 
 //            Bundle args = getArguments();
@@ -206,7 +223,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
             //Log.i("Fragment", Integer.toString(args.getInt(ARG_SECTION_NUMBER)));
 
-            return rootView;
+            //return rootView;
         }
     }
 
