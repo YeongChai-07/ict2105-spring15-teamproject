@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="my_data_list">
+
+        <item>my data item 1</item>
+        <item>my data item 2</item>
+        <item>my data item 3</item>
+        <item>my data item 4</item>
+        <item>my data item 5</item>
+        <item>my data item 6</item>
+        <item>my data item 7</item>
+        <item>my data item 8</item>
+        <item>my data item 9</item>
+    </string-array>
+
+    <string-array name="my_data_list2">
+
+        <item>my data 2 item 1</item>
+        <item>my data 2 item 2</item>
+        <item>my data 2 item 3</item>
+        <item>my data 2 item 4</item>
+        <item>my data 2 item 5</item>
+        <item>my data 2 item 6</item>
+        <item>my data 2 item 7</item>
+        <item>my data 2 item 8</item>
+        <item>my data 2 item 9</item>
+    </string-array>
+
+
+</resources>
