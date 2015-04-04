@@ -6,4 +6,6 @@
     <dimen name="rating">15dip</dimen>
     <dimen name="genre">13dip</dimen>
     <dimen name="year">12dip</dimen>
+    <!-- Yeong Chai's Image dimension -->
+    <dimen name="image_top_margin">14dp</dimen>
 </resources>
