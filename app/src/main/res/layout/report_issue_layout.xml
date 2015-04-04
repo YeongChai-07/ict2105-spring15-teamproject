@@ -52,7 +52,6 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/button_captureImage"
-        android:src="@drawable/ic_launcher"
         android:layout_marginTop="@dimen/image_top_margin" />
 
 
