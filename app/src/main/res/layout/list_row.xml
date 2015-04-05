@@ -31,7 +31,7 @@
         android:layout_below="@id/title"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/thumbnail"
-        android:textSize="@dimen/rating" />
+        android:textSize="@dimen/location" />
 
     <!-- Urgency Level -->
     <TextView
@@ -42,16 +42,27 @@
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/thumbnail"
         android:textColor="@color/urgency"
-        android:textSize="@dimen/genre" />
+        android:textSize="@dimen/urgency" />
+
+    <!-- Time Reported -->
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/datetime"
+        android:textSize="@dimen/time" />
 
     <!-- Date Reported -->
     <TextView
         android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/time"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:textColor="@color/date"
-        android:textSize="@dimen/year" />
+        android:textColor="@color/datetime"
+        android:textSize="@dimen/date" />
 
 </RelativeLayout>

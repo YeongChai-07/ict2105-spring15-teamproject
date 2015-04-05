@@ -71,6 +71,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
+
     }
 
 
@@ -81,6 +82,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         return true;
     }
 
+    /**
+     * On selecting action bar icons
+     * */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -89,8 +93,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch(id) {
+            case R.id.action_settings:
+                return true;
+
+            case R.id.action_add:
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -131,8 +139,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         @Override
         public int getCount() {
-            // Show 2 total pages.
-            return 2;
+            // Show 3 total pages.
+            return 3;
         }
 
         @Override
@@ -143,12 +151,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     return getString(R.string.title_section1).toUpperCase(l);
                 case 1:
                     return getString(R.string.title_section2).toUpperCase(l);
+                case 2:
+                    return getString(R.string.title_section3).toUpperCase(l);
             }
             return null;
         }
     }
 
-    public void onFragmentInteraction(String id){
-        Log.i(TAG, "onFragmentInteraction item: " + id);
+    public void onFragmentInteraction(int id){
+        Log.i(TAG, "onFragmentInteraction item: " + String.valueOf(id) );
     }
 }

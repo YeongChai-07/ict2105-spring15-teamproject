@@ -3,9 +3,11 @@
 
     <string name="app_name">inSITe</string>
     <string name="title_section1">Pending</string>
-    <string name="title_section2">Resolved</string>
+    <string name="title_section2">In Progress</string>
+    <string name="title_section3">Resolved</string>
     <string name="btn_issue">Raise Issue</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="action_new_issue">Report issue</string>
+    <string name="list_empty">No data is loaded.</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_camera">CameraActivity</string>
 

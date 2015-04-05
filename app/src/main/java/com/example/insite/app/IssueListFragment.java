@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
 
@@ -40,30 +41,29 @@ public class IssueListFragment extends ListFragment {
     // Authorisation token
     private static final String token = "51d3b1d3beb959685da8fa662de3948a";
 
-    // Issue json url
-    private static final String url = "http://www.metalvilletrading.com.sg/insite/v1/issue";
+    // Prepare the Issue json url stucture
+    private static String baseUrl = "http://192.168.1.5/insite/v1/issue";
+    private static String url = null;
+
     private ProgressDialog pDialog;
     private List<Issue> issueList = new ArrayList<Issue>();
     private ListView listView;
     private CustomListAdapter adapter;
 
-
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "Position";
+    private static final String ARG_TAB = "Position";
 
-
-    // TODO: Rename and change types of parameters
-    private int mParam1;
-
+    // Initialise an error variable if mTabPosition is not set
+    private int mTabPosition = -1;
 
     private OnFragmentInteractionListener mListener;
 
-    // TODO: Rename and change types of parameters
-    public static IssueListFragment newInstance(int param1) {
+    private LayoutInflater inflater;
+
+    public static IssueListFragment newInstance(int mTabPosition) {
         IssueListFragment fragment = new IssueListFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_PARAM1, param1);
+        args.putInt(ARG_TAB, mTabPosition);
 
         fragment.setArguments(args);
         return fragment;
@@ -81,7 +81,26 @@ public class IssueListFragment extends ListFragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mParam1 = getArguments().getInt(ARG_PARAM1);
+            mTabPosition = getArguments().getInt(ARG_TAB);
+        }
+
+        // Issue json url
+        switch(mTabPosition){
+            case 1: //Get all Pending issue
+                url = baseUrl + "/status/pending";
+                break;
+
+            case 2: //Get all Resolved issue
+                url = baseUrl + "/status/progress";
+                break;
+
+            case 3: //Get all Resolved issue
+                url = baseUrl + "/status/resolved";
+                break;
+
+            default: //Get all issue
+                //do nothing
+                break;
         }
 
         // Set an Adapter to the ListView
@@ -89,6 +108,10 @@ public class IssueListFragment extends ListFragment {
 
         setListAdapter(adapter);
 
+        // Set the emptyView to the ListView
+        //View emptyView = inflater.inflate(R.layout.misc_layout, null, false);
+        //getListView().setEmptyView(emptyView);
+        //setEmptyText("No Data Here");
 
         pDialog = new ProgressDialog(getActivity());
         // Showing progress dialog before making http request
@@ -97,7 +120,7 @@ public class IssueListFragment extends ListFragment {
 
 
         // Creating volley request obj
-        JsonObjectRequest movieReq = new JsonObjectRequest(url, null,
+        JsonObjectRequest issueReq = new JsonObjectRequest(url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -114,16 +137,20 @@ public class IssueListFragment extends ListFragment {
 
                                 Issue issue = new Issue();
 
+                                issue.setIssue_id(obj.getInt("id"));
                                 issue.setTitle(obj.getString("issue_name"));
-
-                                Log.d(TAG, obj.getString("image_path"));
-                                issue.setThumbnailUrl(obj.getString("image_path"));
-
+                                issue.setThumbnail_url(obj.getString("image_path"));
                                 issue.setLocation(obj.getString("location_name"));
-
                                 issue.setDate(obj.getString("date_reported"));
-
+                                issue.setTime(obj.getString("time_reported"));
                                 issue.setUrgency_level(obj.getString("urgency_level"));
+
+                                issue.setDescription(obj.getString("description"));
+                                issue.setReporter(obj.getString("reporter_name"));
+                                issue.setEmail(obj.getString("email"));
+                                issue.setContact(obj.getString("contact"));
+                                issue.setStatus(obj.getString("status"));
+                                issue.setStatus_comment(obj.getString("status_comment"));
 
                                 // adding issue to issue array
                                 issueList.add(issue);
@@ -155,7 +182,7 @@ public class IssueListFragment extends ListFragment {
         };
 
         // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(movieReq);
+        AppController.getInstance().addToRequestQueue(issueReq);
 
     }
 
@@ -185,9 +212,13 @@ public class IssueListFragment extends ListFragment {
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            //mListener.onFragmentInteraction(IssueContent.ITEMS.get(position).id);
+            //mListener.onFragmentInteraction(String.valueOf(position));
 
-            mListener.onFragmentInteraction(String.valueOf(position));
+            // To get the issue id (primary key) from the database instead of the order id from listview
+            Issue issueObj = issueList.get(position);
+            int issue_id = issueObj.getIssue_id();
+
+            mListener.onFragmentInteraction(issue_id);
         }
     }
 
@@ -199,7 +230,7 @@ public class IssueListFragment extends ListFragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(String id);
+        public void onFragmentInteraction(int id);
     }
 
 

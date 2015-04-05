@@ -26,6 +26,16 @@ public class CustomListAdapter extends BaseAdapter {
     private List<Issue> issueItems;
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
+    // our ViewHolder.
+    // caches our TextView
+    static class ViewHolderItem {
+        TextView title;
+        TextView location;
+        TextView urgency;
+        TextView date;
+        TextView time;
+    }
+
     public CustomListAdapter(Activity activity, List<Issue> issueItems) {
         this.activity = activity;
         this.issueItems = issueItems;
@@ -49,11 +59,35 @@ public class CustomListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
+        ViewHolderItem viewHolder;
+
         if (inflater == null)
             inflater = (LayoutInflater) activity
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (convertView == null)
+
+        // reuse views
+        if (convertView == null){
             convertView = inflater.inflate(R.layout.list_row, null);
+
+            //set up the ViewHolder
+            viewHolder = new ViewHolderItem();
+
+            viewHolder.title = (TextView) convertView.findViewById(R.id.title);
+            viewHolder.location = (TextView) convertView.findViewById(R.id.location);
+            viewHolder.urgency = (TextView) convertView.findViewById(R.id.urgency);
+            viewHolder.date = (TextView) convertView.findViewById(R.id.date);
+            viewHolder.time = (TextView) convertView.findViewById(R.id.time);
+
+            //store the holder with the view.
+            convertView.setTag(viewHolder);
+        }
+        else{
+            // View recycled, no need to inflate
+            // avoid calling findViewById() on resource every time
+            // just use the viewHolder
+            viewHolder = (ViewHolderItem) convertView.getTag();
+        }
+
 
         if (imageLoader == null)
             imageLoader = AppController.getInstance().getImageLoader();
@@ -61,34 +95,53 @@ public class CustomListAdapter extends BaseAdapter {
         NetworkImageView thumbNail = (NetworkImageView) convertView
                 .findViewById(R.id.thumbnail);
 
-        TextView title = (TextView) convertView.findViewById(R.id.title);
-        TextView location = (TextView) convertView.findViewById(R.id.location);
-        TextView urgency = (TextView) convertView.findViewById(R.id.urgency);
-        TextView date = (TextView) convertView.findViewById(R.id.date);
+
 
         // getting issue data for the row
         Issue m = issueItems.get(position);
 
         // thumbnail image
-        if(m.getThumbnailUrl().length() > 0 && !m.getThumbnailUrl().equals("null") ) {
-            thumbNail.setImageUrl(m.getThumbnailUrl(), imageLoader);
+        if(m.getThumbnail_url().length() > 0 && !m.getThumbnail_url().equals("null") ) {
+            thumbNail.setImageUrl(m.getThumbnail_url(), imageLoader);
+            // set an error thumbnail image in case if the image URL is invalid or inaccessible
+            thumbNail.setErrorImageResId(R.drawable.sit_logo_black);
         }
         else{
             thumbNail.setDefaultImageResId(R.drawable.sit_logo);
-            //thumbNail.setErrorImageResId(R.drawable.sit_logo);
         }
 
         // title
-        title.setText(m.getTitle());
+        viewHolder.title.setText(m.getTitle());
 
         // location
-        location.setText("Location: " + m.getLocation());
+        viewHolder.location.setText("@ " + m.getLocation());
 
         // urgency level
-        urgency.setText("Urgency: " + m.getUrgency_level());
+        viewHolder.urgency.setText("Urgency: " + m.getUrgency_level());
+
+        switch(m.getUrgency_level()) {
+            case "Very high":
+                viewHolder.urgency.setTextColor( activity.getResources().getColor(R.color.urgency_very_high) );
+                break;
+            case "High":
+                viewHolder.urgency.setTextColor( activity.getResources().getColor(R.color.urgency_high) );
+                break;
+            case "Normal":
+                viewHolder.urgency.setTextColor( activity.getResources().getColor(R.color.urgency_normal) );
+                break;
+            case "Low":
+                viewHolder.urgency.setTextColor( activity.getResources().getColor(R.color.urgency_low) );
+                break;
+            case "Very low":
+                viewHolder.urgency.setTextColor( activity.getResources().getColor(R.color.urgency_very_low) );
+                break;
+        }
 
         // date reported
-        date.setText(m.getDate());
+        viewHolder.date.setText(m.getDate());
+
+        // time reported
+        viewHolder.time.setText(m.getTime());
 
         return convertView;
     }
