@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollview_report_issue"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent" android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/header_issue"
+            style="@style/sectionHeader"
+            android:id="@+id/header_issue"
+            android:layout_marginBottom="@dimen/header_bottom_margin" />
+
+        <EditText
+            android:id="@+id/edit_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_issue_title"
+            android:singleLine="true"
+            android:layout_marginLeft="@dimen/editText_left_right_margin"
+            android:layout_marginRight="@dimen/editText_left_right_margin" />
+
+        <EditText
+            android:id="@+id/edit_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_location"
+            android:singleLine="true"
+            android:imeOptions="actionDone"
+            android:layout_marginLeft="@dimen/editText_left_right_margin"
+            android:layout_marginRight="@dimen/editText_left_right_margin" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/header_detail"
+            style="@style/sectionHeader"
+            android:id="@+id/header_detail"
+            android:layout_marginBottom="@dimen/header_bottom_margin"
+            android:layout_marginTop="@dimen/header_top_margin" />
+
+        <Button
+            android:id="@+id/button_captureImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_capture_image"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="@dimen/editText_left_right_margin"
+            android:layout_marginRight="@dimen/editText_left_right_margin" />
+
+        <ImageView
+            android:id="@+id/issue_Image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            />
+
+        <View style="@style/divider" />
+
+        <EditText
+            android:id="@+id/multiLine_Description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:hint="@string/hint_description"
+            android:layout_marginLeft="@dimen/editText_left_right_margin"
+            android:layout_marginRight="@dimen/editText_left_right_margin" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent" android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/textview_urgencyLevel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:text="@string/label_urgency"
+                android:textSize="@dimen/form_fontsize"
+                android:layout_marginLeft="@dimen/form_left_margin" />
+            <Spinner
+                android:id="@+id/spinner_urgencyPicker"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.7"
+                android:entries="@array/urgency_array"
+                android:layout_marginRight="@dimen/editText_left_right_margin" />
+        </LinearLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/header_contact"
+            style="@style/sectionHeader"
+            android:id="@+id/header_contact"
+            android:layout_marginBottom="@dimen/header_bottom_margin"
+            android:layout_marginTop="@dimen/header_top_margin" />
+
+        <EditText
+            android:id="@+id/edit_reporter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_reporter"
+            android:singleLine="true"
+            android:layout_marginLeft="@dimen/editText_left_right_margin"
+            android:layout_marginRight="@dimen/editText_left_right_margin" />
+
+        <EditText
+            android:id="@+id/edit_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_email"
+            android:singleLine="true"
+            android:inputType="textEmailAddress"
+            android:layout_marginLeft="@dimen/editText_left_right_margin"
+            android:layout_marginRight="@dimen/editText_left_right_margin" />
+
+        <EditText
+            android:id="@+id/edit_contact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_contact"
+            android:singleLine="true"
+            android:inputType="phone"
+            android:layout_marginLeft="@dimen/editText_left_right_margin"
+            android:layout_marginRight="@dimen/editText_left_right_margin" />
+
+        <View style="@style/divider" />
+
+        <Button
+            android:id="@+id/button_submitIssue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_submit_issue"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/multiLine_Description"
+            android:layout_marginLeft="@dimen/editText_left_right_margin"
+            android:layout_marginRight="@dimen/editText_left_right_margin" />
+    </LinearLayout>
+</ScrollView>

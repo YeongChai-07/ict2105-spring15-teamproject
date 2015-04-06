@@ -19,18 +19,38 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+        <!-- The main/home activity (it has no parent activity) -->
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- A child of the main activity -->
         <activity
-            android:name=".CameraActivity"
-            android:label="@string/title_activity_camera" >
+            android:name=".ReportIssueActivity"
+            android:label="@string/page_name_report"
+            android:windowSoftInputMode="stateHidden"
+            android:parentActivityName="com.example.insite.app.MainActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.insite.app.MainActivity" />
+        </activity>
+
+        <!-- A child of the main activity -->
+        <activity
+            android:name=".ViewIssueActivity"
+            android:label="@string/page_name_view"
+            android:parentActivityName="com.example.insite.app.MainActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.insite.app.MainActivity" />
         </activity>
     </application>
 

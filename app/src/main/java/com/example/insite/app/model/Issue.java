@@ -1,9 +1,12 @@
 package com.example.insite.app.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Lim Xing Yi on 4/1/2015.
  */
-public class Issue {
+public class Issue implements Parcelable {
     private int issue_id;
     private String title;
     private String thumbnail_url;
@@ -147,5 +150,55 @@ public class Issue {
         this.status_comment = status_comment;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+        dest.writeInt(this.issue_id);
+        dest.writeString(this.title);
+        dest.writeString(this.thumbnail_url);
+        dest.writeString(this.location);
+        dest.writeString(this.urgency_level);
+        dest.writeString(this.date);
+        dest.writeString(this.time);
+        dest.writeString(this.description);
+        dest.writeString(this.reporter);
+        dest.writeString(this.email);
+        dest.writeString(this.contact);
+        dest.writeString(this.status);
+        dest.writeString(this.status_comment);
+    }
+
+    public static final Parcelable.Creator<Issue> CREATOR
+            = new Parcelable.Creator<Issue>() {
+        public Issue createFromParcel(Parcel in) {
+            return new Issue(in);
+        }
+
+        public Issue[] newArray(int size) {
+            return new Issue[size];
+        }
+    };
+
+    private Issue(Parcel in) {
+        this.issue_id = in.readInt();
+        this.title = in.readString();
+        this.thumbnail_url = in.readString();
+        this.location = in.readString();
+        this.urgency_level = in.readString();
+        this.date = in.readString();
+
+        this.time = in.readString();
+        this.description = in.readString();
+        this.reporter = in.readString();
+        this.email = in.readString();
+        this.contact = in.readString();
+        this.status = in.readString();
+        this.status_comment = in.readString();
+    }
 }
 

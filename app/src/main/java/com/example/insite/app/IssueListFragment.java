@@ -3,6 +3,7 @@ package com.example.insite.app;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.insite.app.adapter.CustomListAdapter;
 import com.example.insite.app.app.AppController;
+import com.example.insite.app.model.AppSetting;
 import com.example.insite.app.model.Issue;
 
 import org.json.JSONArray;
@@ -39,14 +41,16 @@ public class IssueListFragment extends ListFragment {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     // Authorisation token
-    private static final String token = "51d3b1d3beb959685da8fa662de3948a";
+    private static final String token = AppSetting.APItoken;
 
     // Prepare the Issue json url stucture
-    private static String baseUrl = "http://192.168.1.5/insite/v1/issue";
+    private static String baseUrl = AppSetting.baseUrl;
     private static String url = null;
 
     private ProgressDialog pDialog;
+
     private List<Issue> issueList = new ArrayList<Issue>();
+
     private ListView listView;
     private CustomListAdapter adapter;
 
@@ -218,7 +222,7 @@ public class IssueListFragment extends ListFragment {
             Issue issueObj = issueList.get(position);
             int issue_id = issueObj.getIssue_id();
 
-            mListener.onFragmentInteraction(issue_id);
+            mListener.onFragmentInteraction(issue_id, issueObj);
         }
     }
 
@@ -230,7 +234,7 @@ public class IssueListFragment extends ListFragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(int id);
+        public void onFragmentInteraction(int id, Parcelable issueObj);
     }
 
 

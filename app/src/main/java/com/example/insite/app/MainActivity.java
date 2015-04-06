@@ -1,6 +1,8 @@
 package com.example.insite.app;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -98,6 +100,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 return true;
 
             case R.id.action_add:
+                Intent newIssueIntent = new Intent(this, ReportIssueActivity.class);
+                this.startActivity(newIssueIntent);
+                //overridePendingTransition(R.anim.right_enter, R.anim.left_exit);
+
                 return true;
         }
 
@@ -158,7 +164,20 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
 
-    public void onFragmentInteraction(int id){
+    public void onFragmentInteraction(int id, Parcelable issueObj){
         Log.i(TAG, "onFragmentInteraction item: " + String.valueOf(id) );
+
+        //get reference to the country Object
+        //Issue issue = (Issue) issue.getTag();
+
+        Intent viewIssueIntent = new Intent(this, ViewIssueActivity.class);
+        //viewIssueIntent.putExtra("issue_id", id);
+        Bundle b = new Bundle();
+        //pass the country object as a parcel
+        b.putParcelable("issue_obj", issueObj);
+        viewIssueIntent.putExtras(b);
+
+        this.startActivity(viewIssueIntent);
+
     }
 }

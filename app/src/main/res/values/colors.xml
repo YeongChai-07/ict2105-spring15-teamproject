@@ -13,4 +13,7 @@
     <color name="urgency_normal">#00ff00</color>
     <color name="urgency_low">#00ee00</color>
     <color name="urgency_very_low">#00cd00</color>
+
+    <color name="emphasis">#31b6e7</color>
+    <color name="bg_gray">#cecbce</color>
 </resources>
