@@ -36,6 +36,8 @@
     <string name="error_title">Please provide a title.</string>
     <string name="error_location">Please provide a location name.</string>
     <string name="error_description">Please provide the description of the issue.</string>
+    <string name="error_reporter">Please provide your name.</string>
+    <string name="error_email">Please ensure your email has the correct format.</string>
 
     <string name="label_issue_title">Title: </string>
     <string name="label_date">Date Reported: </string>

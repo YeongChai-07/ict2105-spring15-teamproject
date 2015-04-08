@@ -127,7 +127,8 @@
             android:singleLine="true"
             android:inputType="phone"
             android:layout_marginLeft="@dimen/editText_left_right_margin"
-            android:layout_marginRight="@dimen/editText_left_right_margin" />
+            android:layout_marginRight="@dimen/editText_left_right_margin"
+            android:maxLength="20" />
 
         <View style="@style/divider" />
 

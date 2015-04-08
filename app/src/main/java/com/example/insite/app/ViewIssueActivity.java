@@ -7,6 +7,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
+import com.example.insite.app.app.AppController;
 import com.example.insite.app.model.Issue;
 
 /**
@@ -29,6 +32,8 @@ public class ViewIssueActivity extends ActionBarActivity {
     private TextView tvContact;
     private TextView tvStatus;
     private TextView tvStatusComment;
+
+    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
@@ -62,6 +67,22 @@ public class ViewIssueActivity extends ActionBarActivity {
         tvContact.setText(issue.getContact());
         tvStatus.setText(issue.getStatus());
         tvStatusComment.setText(issue.getStatus_comment());
+
+        if (imageLoader == null)
+            imageLoader = AppController.getInstance().getImageLoader();
+
+        NetworkImageView imageIssue = (NetworkImageView) this
+                .findViewById(R.id.img_issue);
+
+        // load image
+        if(issue.getImage_url().length() > 0 && !issue.getImage_url().equals("null") ) {
+            imageIssue.setImageUrl(issue.getImage_url(), imageLoader);
+            // set an error thumbnail image in case if the image URL is invalid or inaccessible
+            imageIssue.setErrorImageResId(R.drawable.sit_logo_black);
+        }
+        else{
+            //imageIssue.setDefaultImageResId(R.drawable.sit_logo);
+        }
     }
 
     @Override

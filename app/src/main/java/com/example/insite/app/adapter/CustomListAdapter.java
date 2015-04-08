@@ -101,8 +101,8 @@ public class CustomListAdapter extends BaseAdapter {
         Issue m = issueItems.get(position);
 
         // thumbnail image
-        if(m.getThumbnail_url().length() > 0 && !m.getThumbnail_url().equals("null") ) {
-            thumbNail.setImageUrl(m.getThumbnail_url(), imageLoader);
+        if(m.getImage_url().length() > 0 && !m.getImage_url().equals("null") ) {
+            thumbNail.setImageUrl(m.getImage_url(), imageLoader);
             // set an error thumbnail image in case if the image URL is invalid or inaccessible
             thumbNail.setErrorImageResId(R.drawable.sit_logo_black);
         }

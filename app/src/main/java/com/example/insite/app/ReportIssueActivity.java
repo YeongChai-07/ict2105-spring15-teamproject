@@ -1,14 +1,12 @@
 package com.example.insite.app;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
@@ -23,26 +21,29 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.example.insite.app.app.AppController;
+import com.example.insite.app.helper.CameraHelper;
+import com.example.insite.app.helper.Common;
+import com.example.insite.app.helper.MultipartRequest;
 import com.example.insite.app.model.AppSetting;
 import com.example.insite.app.model.Issue;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.TimeZone;
 
 //import com.example.insite.app.util.imagePOST_RequestHelper;
 
@@ -54,49 +55,62 @@ public class ReportIssueActivity extends ActionBarActivity {
 
     // Log tag
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String CAMERA_TAG = "Camera_Test";
+    private static final String CAMERA_TAG = "Camera Test";
+    private static final String UPLOAD_TAG = "Image Upload";
+
+    private Context context;
 
     private EditText editTitle;
     private EditText editLocation;
-    private Button m_Camera;
-    private Spinner editUrgency;
-    private ImageView m_IssueImage;
+    private Button btnCamera;
+    private Spinner spinnerUrgency;
+    private ImageView imgIssue;
     private EditText editDescription;
     private EditText editReporter;
     private EditText editEmail;
     private EditText editContact;
-    private Button m_submitIssue;
+    private Button btnSubmit;
 
 
-    final String KEY_ISSUENAME = "RESTORE_ISSUENAME";
-    final String KEY_LOCATION = "RESTORE_ISSUE_LOCATION";
-    final String KEY_URGENCY = "RESTORE_ISSUE_URGENCY";
-    final String KEY_IMAGEPATH = "RESTORE_IMAGE_PATH";
-    final String KEY_DESC = "RESTORE_ISSUE_DESCRIPTION";
-    final String ACTIVITY_TAG = "REPORT ISSUE_SCREEN";
+    final static String STATE_ISSUENAME = "title";
+    final static String STATE_LOCATION = "location";
+    final static String STATE_IMAGEPATH = "imagePath";
+    final static String STATE_DESC = "description";
+    final static String STATE_URGENCY = "urgency";
+    final static String STATE_REPORTER = "reporter";
+    final static String STATE_EMAIL = "email";
+    final static String STATE_CONTACT = "contact";
 
     final String SUBMIT_ISSUE_URL = AppSetting.baseUrl;
     final String UPLOAD_IMAGE_URL = AppSetting.imagePostUrl;
 
     // Authorisation token
-    private static final String token = "51d3b1d3beb959685da8fa662de3948a";
+    private static final String token = AppSetting.APItoken;
 
     //Camera Attributes
-    String currentImagePath = null;
-    static File imagePath;
+    String currentImagePath = "";
+    String mFileName = "";
+    static File imageFile;
+
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1001;
     private Uri currentImageUri;
-    String fileName = "";
     public static final int MEDIA_TYPE_IMAGE = 1;
     Bitmap bMapScaled;
 
-    final String NO_IMAGE_LOADED = "null";
+    String mtoastMsg = "";
+    boolean mIsSubmitted = false;
+    private ProgressDialog progress;
+
+    Issue newIssue = new Issue();
 
     @Override
     protected void onCreate (Bundle savedInstanceState)
     {
+        // Always call the superclass first
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_issue);
+
+        Common.setContext(getApplicationContext());
 
         // to setup touch outside listener for soft keyboard dismissal
         setupUI(findViewById(R.id.scrollview_report_issue));
@@ -105,54 +119,65 @@ public class ReportIssueActivity extends ActionBarActivity {
         final String TITLE_ERROR_MSG = getResources().getString(R.string.error_title);
         final String LOCATION_ERROR_MSG = getResources().getString(R.string.error_location);
         final String ISSUE_DESC_ERROR_MSG = getResources().getString(R.string.error_description);
-
+        final String REPORTER_ERROR_MSG = getResources().getString(R.string.error_reporter);
+        final String EMAIL_ERROR_MSG = getResources().getString(R.string.error_email);
 
         editTitle = (EditText) findViewById(R.id.edit_title);
         editLocation = (EditText) findViewById(R.id.edit_location);
-        m_Camera = (Button) findViewById(R.id.button_captureImage);
-        editUrgency = (Spinner) findViewById (R.id.spinner_urgencyPicker);
-        m_IssueImage = (ImageView)findViewById(R.id.issue_Image);
+        btnCamera = (Button) findViewById(R.id.button_captureImage);
+        spinnerUrgency = (Spinner) findViewById (R.id.spinner_urgencyPicker);
+        imgIssue = (ImageView)findViewById(R.id.issue_Image);
         editDescription = (EditText) findViewById(R.id.multiLine_Description);
         editReporter = (EditText) findViewById(R.id.edit_reporter);
         editEmail = (EditText) findViewById(R.id.edit_email);
         editContact = (EditText) findViewById(R.id.edit_contact);
-        m_submitIssue = (Button) findViewById(R.id.button_submitIssue);
-
+        btnSubmit = (Button) findViewById(R.id.button_submitIssue);
 
         editTitle.clearFocus();
+        progress = new ProgressDialog(this);
 
-        handleImageFrom_Resources();
+        newIssue.setImage_url("");
+        // get default image
+        bMapScaled = Common.setDefaultImage();
 
+        // Check whether we're recreating a previously destroyed instance
         if(savedInstanceState != null)
         {
-            editTitle.setText(savedInstanceState.getString(KEY_ISSUENAME));
-            editLocation.setText(savedInstanceState.getString(KEY_LOCATION));
-            currentImagePath = savedInstanceState.getString(KEY_IMAGEPATH);
-            try
-            {
-                if(!currentImagePath.equals(NO_IMAGE_LOADED) )
-                {
-                    handleImageFrom_PictureFile(currentImagePath);
-                }
-           }
-           catch(NullPointerException npe)
-           {
+            // Restore value from saved state
+            editTitle.setText(savedInstanceState.getString(STATE_ISSUENAME));
+            editLocation.setText(savedInstanceState.getString(STATE_LOCATION));
+            currentImagePath = savedInstanceState.getString(STATE_IMAGEPATH);
+            editDescription.setText(savedInstanceState.getString(STATE_DESC));
+            spinnerUrgency.setSelection(savedInstanceState.getInt(STATE_URGENCY));
+            editReporter.setText(savedInstanceState.getString(STATE_REPORTER));
+            editEmail.setText(savedInstanceState.getString(STATE_EMAIL));
+            editContact.setText(savedInstanceState.getString(STATE_CONTACT));
 
-           }
+            // if no image is captured
+                if(!currentImagePath.isEmpty() )
+                {
+                    bMapScaled = Common.handleImageFrom_PictureFile(currentImagePath);
+                }
+
+        } else {
+            // Probably initialize members with default values for a new instance
 
         }
 
-        m_IssueImage.setImageBitmap(bMapScaled);
 
-        m_Camera.setOnClickListener(new View.OnClickListener(){
+        // set image in the image view
+        imgIssue.setImageBitmap(bMapScaled);
+
+        btnCamera.setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
 //                Intent cameraIntent = new Intent(getApplicationContext(), CameraActivity.class);
 //                startActivity(cameraIntent);
                 if (currentImageUri == null) {
-                    currentImageUri = getImageFileUri();
+                    mFileName = CameraHelper.generateFileName();
+                    newIssue.setImage_url(mFileName);
+                    currentImageUri = CameraHelper.getImageFileUri(imageFile, mFileName);
                 }
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, currentImageUri); // set the image file name
@@ -162,54 +187,46 @@ public class ReportIssueActivity extends ActionBarActivity {
 
         });
 
-        m_submitIssue.setOnClickListener(new View.OnClickListener(){
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick(View v)
-            {
-               String validateString = editDescription.getText().toString();
-               validateString.trim();
-               //validateString = validateString.replaceAll("\n", "");
-               System.out.println("The content is : " + validateString);
+            public void onClick(View v) {
 
-               if(isInputEmpty(editTitle.getText().toString()) )
-               {
-                   editTitle.requestFocus();
-                   editTitle.setError(TITLE_ERROR_MSG);    //Shows a error message label
-                   return;
 
-               }
+                if (Common.isInputEmpty(editTitle.getText().toString())) {
+                    editTitle.requestFocus();
+                    editTitle.setError(TITLE_ERROR_MSG);    //Shows a error message label
+                    return;
 
-               if(isInputEmpty(editLocation.getText().toString()) )
-               {
-                   editLocation.requestFocus();
-                   editLocation.setError(LOCATION_ERROR_MSG);    //Shows a error message label
-                   return;
-               }
+                }
 
-               if(isInputEmpty(editDescription.getText().toString()) )
-               {
-                   editDescription.requestFocus();
-                   editDescription.setError(ISSUE_DESC_ERROR_MSG);    //Shows a error message label
+                if (Common.isInputEmpty(editLocation.getText().toString())) {
+                    editLocation.requestFocus();
+                    editLocation.setError(LOCATION_ERROR_MSG);    //Shows a error message label
+                    return;
+                }
 
-                   return;
+                if (Common.isInputEmpty(editDescription.getText().toString())) {
+                    editDescription.requestFocus();
+                    editDescription.setError(ISSUE_DESC_ERROR_MSG);    //Shows a error message label
 
-               }
+                    return;
 
+                }
 
 
                 String issueName = editTitle.getText().toString().trim();
                 String issueLocation = editLocation.getText().toString().trim();
                 String issueDesc = editDescription.getText().toString().trim();
-                String urgencyType = editUrgency.getSelectedItem().toString();
+                String urgencyType = spinnerUrgency.getSelectedItem().toString();
                 String reporter = editReporter.getText().toString().trim();
                 String email = editEmail.getText().toString().trim();
-                String contact = editEmail.getText().toString().trim();
+                String contact = editContact.getText().toString().trim();
 
-                Issue newIssue = new Issue();
+
                 newIssue.setTitle(issueName);
-                newIssue.setDate(getTodayDate());
-                newIssue.setTime(getCurrentTime());
+                newIssue.setDate(Common.getTodayDate());
+                newIssue.setTime(Common.getCurrentTime());
                 newIssue.setLocation(issueLocation);
                 newIssue.setDescription(issueDesc);
                 newIssue.setUrgency_level(urgencyType);
@@ -217,27 +234,15 @@ public class ReportIssueActivity extends ActionBarActivity {
                 newIssue.setEmail(email);
                 newIssue.setContact(contact);
 
-                //Save the record
+
                 submitIssue(newIssue);
 
-                //finish();
 
             }
 
         });
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState)
-    {
-       savedInstanceState.putString(KEY_ISSUENAME, editTitle.getText().toString());
-       savedInstanceState.putString(KEY_LOCATION, editLocation.getText().toString());
-       savedInstanceState.putString(KEY_URGENCY, editUrgency.getSelectedItem().toString());
-
-       savedInstanceState.putString(KEY_IMAGEPATH, currentImagePath );
-       savedInstanceState.putString(KEY_DESC, editDescription.getText().toString());
-
-    }
 
     //TODO: For use to return the result back from the camera Intent Service
     @Override
@@ -247,16 +252,14 @@ public class ReportIssueActivity extends ActionBarActivity {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Log.d(CAMERA_TAG, "Trying to save image!");
-                galleryAddPic();
+                CameraHelper.galleryAddPic(currentImageUri, this);
 
-                //setPic();
-                //if(currentImagePath == null){
-                    currentImagePath= currentImageUri.getPath();
-                //}
-                //ImageView imageViewer = (ImageView) findViewById(R.id.imagePreviewThumb);
-                handleImageFrom_PictureFile(currentImagePath);
+                currentImagePath= currentImageUri.getPath();
+
+                bMapScaled = Common.handleImageFrom_PictureFile(currentImagePath);
+
                 // Set image to viewer
-                m_IssueImage.setImageBitmap(bMapScaled);
+                imgIssue.setImageBitmap(bMapScaled);
 
             } else if (resultCode == RESULT_CANCELED) {
                 // User cancelled the image capture
@@ -267,65 +270,64 @@ public class ReportIssueActivity extends ActionBarActivity {
     }
 
 
-    private boolean isInputEmpty(String stringToCheck)
-    {
-       //stringToCheck.trim();
-       stringToCheck = stringToCheck.replaceAll(" ", "");
-       stringToCheck = stringToCheck.replaceAll("\n", "");
-       return stringToCheck.isEmpty();
-    }
 
     private void submitIssue(final Issue issue)
     {
-        Log.d(TAG, issue.getTitle());
 
         StringRequest submitIssue_Req = new StringRequest(Request.Method.POST, SUBMIT_ISSUE_URL, new Response.Listener<String>() {
+
             @Override
             public void onResponse(String response) {
-                Log.i(ACTIVITY_TAG, "This HTTP response is : " + response);
+                Log.i(TAG, "This HTTP response is : " + response);
+
+                mtoastMsg = "Thank you for reporting the issue!";
+                Toast.makeText(ReportIssueActivity.this, mtoastMsg, Toast.LENGTH_LONG).show();
+                finish();
             }
 
         },new Response.ErrorListener(){
-                @Override
-                public void onErrorResponse(VolleyError error)
-                {
-                    Log.e(ACTIVITY_TAG, "OOPS... An error occurred. INFO: " + error);
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                    //Toast.makeText(context,
+                    //        context.getString(R.string.error_network_timeout),
+                    //        Toast.LENGTH_LONG).show();
+                } else if (error instanceof AuthFailureError) {
+                    //
+                } else if (error instanceof ServerError) {
+                    //
+                } else if (error instanceof NetworkError) {
+                    //
+                } else if (error instanceof ParseError) {
+                    //
                 }
+
+                mtoastMsg = "Sorry, the form failed to submit.";
+                Toast.makeText(ReportIssueActivity.this, mtoastMsg, Toast.LENGTH_LONG).show();
             }
+        }
         ){
             @Override
             public Map<String,String> getParams()
             {
                 Map<String, String> issueMap  = new HashMap<String, String>();
-                 issueMap.put("issue_name", issue.getTitle() );
-                 issueMap.put("description", issue.getDescription() );
-                 issueMap.put("location_name", issue.getLocation() );
+                issueMap.put("issue_name", issue.getTitle() );
+                issueMap.put("description", issue.getDescription() );
+                issueMap.put("location_name", issue.getLocation() );
 
+                if( !issue.getImage_url().toString().isEmpty() )
+                    issueMap.put("image_path", issue.getImage_url());
 
-                if (!currentImagePath.equals(NO_IMAGE_LOADED)) {
+                issueMap.put("date_reported", issue.getDate());
+                issueMap.put("time_reported", issue.getTime());
+                issueMap.put("urgency_level", issue.getUrgency_level());
+                issueMap.put("reporter", issue.getReporter());
+                issueMap.put("email", issue.getEmail());
+                issueMap.put("contact", issue.getContact());
 
-                    String fileName = "";
-                    StringTokenizer st = new StringTokenizer(currentImagePath, "/");
-
-                    while (st.hasMoreTokens()) {
-                        fileName = st.nextToken();
-
-                    }
-
-                    System.out.println("File : " + fileName);
-                     issueMap.put("image_path", fileName);
-                }
-                else {
-                     issueMap.put("image_path", currentImagePath);
-                }
-                 issueMap.put("date_reported", issue.getDate());
-                 issueMap.put("time_reported", issue.getTime());
-                 issueMap.put("urgency_level", issue.getUrgency_level());
-                 issueMap.put("reporter", issue.getReporter());
-                 issueMap.put("email", issue.getEmail());
-                 issueMap.put("mobile", issue.getContact());
-
-                return  issueMap;
+                return issueMap;
             }
 
             @Override
@@ -338,153 +340,65 @@ public class ReportIssueActivity extends ActionBarActivity {
 
         AppController.getInstance().addToRequestQueue(submitIssue_Req);
 
-/*        if(!currentImagePath.equals(NO_IMAGE_LOADED))
+        if( !currentImagePath.isEmpty() )
         {
-            imagePOST_RequestHelper uploadImage = new imagePOST_RequestHelper(UPLOAD_IMAGE_URL, new Response.ErrorListener(){
+
+
+            progress.setMessage("Uploading Image :) ");
+            progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progress.setIndeterminate(true);
+            progress.show();
+
+            File sourceFile = new File(currentImagePath);
+            Map<String, String> stringMap = new HashMap<String, String>();
+
+            uploadFile("uploadTag", UPLOAD_IMAGE_URL, sourceFile, "image_file", stringMap, new Response.Listener<String>() {
                 @Override
-                public void onErrorResponse(VolleyError error)
-                {
-                    Log.e(ACTIVITY_TAG, "OOPS... An error occurred. INFO: " + error);
+                public void onResponse(String s) {
+                    Log.d(UPLOAD_TAG, "Success");
+                    progress.dismiss();
+                    mtoastMsg = "Image has been uploaded successfully.";
+                    Toast.makeText(ReportIssueActivity.this, mtoastMsg, Toast.LENGTH_LONG).show();
                 }
-            },new Response.Listener<String>() {
+            }, new Response.ErrorListener() {
                 @Override
-                public void onResponse(String response) {
-                    Log.i(ACTIVITY_TAG, "This HTTP response is : " + response);
+                public void onErrorResponse(VolleyError volleyError) {
+                    //Log.d(UPLOAD_TAG, "Failed");
+                    VolleyLog.d(UPLOAD_TAG, "Error: " + volleyError.getMessage());
+
+                    mtoastMsg = "Image has failed to upload.";
+                    Toast.makeText(ReportIssueActivity.this, mtoastMsg, Toast.LENGTH_LONG).show();
                 }
-
-            }, new File(currentImagePath)
-
-            );
-
-            AppController.getInstance().addToRequestQueue(uploadImage);
-            Toast.makeText(this, "File Name : " + currentImagePath, Toast.LENGTH_LONG).show();
-
-        }*/
-
-
-        //Toast.makeText(this, "Today's date is: " + getTodayDate() + "\nCurrent Time is : " + getCurrentTime(),Toast.LENGTH_LONG ).show();
-
-    }
-
-    private String getTodayDate()
-    {
-        TimeZone currZone = TimeZone.getTimeZone("Asia/Singapore");
-        Calendar myCal = Calendar.getInstance(currZone, new Locale("en"));
-        SimpleDateFormat sdf = new SimpleDateFormat();
-        sdf.applyPattern("yyyy-MM-dd");
-
-
-        return ( sdf.format(myCal.getTime()) );
-    }
-
-    private String getCurrentTime()
-    {
-        TimeZone currZone = TimeZone.getTimeZone("Asia/Singapore");
-        Calendar myCal = Calendar.getInstance(currZone, new Locale("en"));
-        String timeNow = String.format("%02d", myCal.get(myCal.HOUR_OF_DAY) ) + ":" + String.format("%02d", myCal.get(myCal.MINUTE) )
-                + ":" + String.format("%02d", myCal.get(myCal.SECOND));
-
-        return timeNow;
-    }
-
-    // TODO: Added the Camera functions
-    private static Uri getImageFileUri() {
-        // Create a storage directory for the images
-        // To be safe(er), you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this
-        imagePath = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "inSITe");
-        Log.d(CAMERA_TAG, "Find " + imagePath.getAbsolutePath());
-        if (!imagePath.exists()) {
-            if (!imagePath.mkdirs()) {
-                Log.d("CameraTestIntent", "failed to create directory");
-                return null;
-            } else {
-                Log.d(CAMERA_TAG, "create new inSITe folder");
-            }
+            }, new MultipartRequest.MultipartProgressListener() {
+                @Override
+                public void transferred(long transfered, int progressTime) {
+                    Log.d(UPLOAD_TAG, "In Progress - " + String.valueOf(progressTime) );
+                    progress.setProgress(progressTime);
+                }
+            });
         }
 
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File image = new File(imagePath, "inSITe" + timeStamp + ".jpg");
-
-        if (!image.exists()) {
-            try {
-                image.createNewFile();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        //return image;
-        // Create an File Uri
-        return Uri.fromFile(image);
     }
 
-    private void galleryAddPic() {
-        /**
-         * copy current image to Gallery
-         */
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        mediaScanIntent.setData(currentImageUri);
-        this.sendBroadcast(mediaScanIntent);
+    protected <T> void uploadFile(final String tag, final String url,
+                                  final File file, final String partName,
+                                  final Map<String, String> headerParams,
+                                  final Response.Listener<String> resultDelivery,
+                                  final Response.ErrorListener errorListener,
+                                  MultipartRequest.MultipartProgressListener progListener) {
+        //AZNetworkRetryPolicy retryPolicy = new AZNetworkRetryPolicy();
+
+        MultipartRequest mr = new MultipartRequest(url, errorListener,
+                resultDelivery, file, file.length(), null, headerParams,
+                partName, progListener);
+
+        //mr.setRetryPolicy(retryPolicy);
+        mr.setTag(tag);
+
+        //Volley.newRequestQueue(this).add(mr);
+        AppController.getInstance().addToRequestQueue(mr);
     }
 
-    private void handleImageFrom_PictureFile(String path)
-    {
-        // Decode image url and retrieve the image
-        Bitmap bMap = BitmapFactory.decodeFile(path);
-        // Rotate image
-        bMap = imageOrientationValidator(bMap,path);
-        // Resize image
-        bMapScaled = Bitmap.createScaledBitmap(bMap, 800, 600, true);
-    }
-
-    private void handleImageFrom_Resources()
-    {
-        Bitmap bMap = BitmapFactory.decodeResource(getResources(), R.drawable.sit_logo);
-        bMapScaled = Bitmap.createScaledBitmap(bMap,800,600, true);
-    }
-
-    private Bitmap imageOrientationValidator(Bitmap bitmap, String path) {
-
-        ExifInterface ei;
-        try {
-            ei = new ExifInterface(path);
-            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_NORMAL);
-            switch (orientation) {
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    bitmap = rotateImage(bitmap, 90);
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    bitmap = rotateImage(bitmap, 180);
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    bitmap = rotateImage(bitmap, 270);
-                    break;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return bitmap;
-    }
-
-    private Bitmap rotateImage(Bitmap source, float angle) {
-
-        Bitmap bitmap = null;
-        Matrix matrix = new Matrix();
-        matrix.postRotate(angle);
-        try {
-            bitmap = Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
-                    matrix, true);
-        } catch (OutOfMemoryError err) {
-            err.printStackTrace();
-        }
-        return bitmap;
-    }
 
     /**
      * Hides virtual keyboard
@@ -520,6 +434,22 @@ public class ReportIssueActivity extends ActionBarActivity {
                 setupUI(innerView);
             }
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState)
+    {
+        savedInstanceState.putString(STATE_ISSUENAME, editTitle.getText().toString());
+        savedInstanceState.putString(STATE_LOCATION, editLocation.getText().toString());
+        savedInstanceState.putString(STATE_IMAGEPATH, currentImagePath.toString() );
+        savedInstanceState.putString(STATE_DESC, editDescription.getText().toString());
+        savedInstanceState.putInt(STATE_URGENCY, spinnerUrgency.getSelectedItemPosition());
+        savedInstanceState.putString(STATE_REPORTER, editReporter.getText().toString());
+        savedInstanceState.putString(STATE_EMAIL, editEmail.getText().toString());
+        savedInstanceState.putString(STATE_CONTACT, editContact.getText().toString());
+
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override

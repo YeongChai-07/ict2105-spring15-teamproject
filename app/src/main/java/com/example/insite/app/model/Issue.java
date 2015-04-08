@@ -9,7 +9,7 @@ import android.os.Parcelable;
 public class Issue implements Parcelable {
     private int issue_id;
     private String title;
-    private String thumbnail_url;
+    private String image_url;
     private String location;
     private String urgency_level;
     private String date;
@@ -25,13 +25,13 @@ public class Issue implements Parcelable {
     public Issue() {
     }
 
-    public Issue(int issue_id, String name, String thumbnail_url, String location,
+    public Issue(int issue_id, String name, String image_url, String location,
                  String urgency_level, String time,
                  String date, String description, String reporter,
                  String email, String contact, String status, String status_comment) {
         this.issue_id = issue_id;
         this.title = name;
-        this.thumbnail_url = thumbnail_url;
+        this.image_url = image_url;
         this.location = location;
         this.urgency_level = urgency_level;
         this.date = date;
@@ -61,12 +61,12 @@ public class Issue implements Parcelable {
         this.title = name;
     }
 
-    public String getThumbnail_url() {
-        return thumbnail_url;
+    public String getImage_url() {
+        return image_url;
     }
 
-    public void setThumbnail_url(String thumbnail_url) {
-        this.thumbnail_url = thumbnail_url;
+    public void setImage_url(String image_url) {
+        this.image_url = image_url;
     }
 
     public String getLocation() {
@@ -160,7 +160,7 @@ public class Issue implements Parcelable {
 
         dest.writeInt(this.issue_id);
         dest.writeString(this.title);
-        dest.writeString(this.thumbnail_url);
+        dest.writeString(this.image_url);
         dest.writeString(this.location);
         dest.writeString(this.urgency_level);
         dest.writeString(this.date);
@@ -187,7 +187,7 @@ public class Issue implements Parcelable {
     private Issue(Parcel in) {
         this.issue_id = in.readInt();
         this.title = in.readString();
-        this.thumbnail_url = in.readString();
+        this.image_url = in.readString();
         this.location = in.readString();
         this.urgency_level = in.readString();
         this.date = in.readString();

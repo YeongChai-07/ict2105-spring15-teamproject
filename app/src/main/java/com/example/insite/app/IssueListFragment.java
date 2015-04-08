@@ -143,7 +143,7 @@ public class IssueListFragment extends ListFragment {
 
                                 issue.setIssue_id(obj.getInt("id"));
                                 issue.setTitle(obj.getString("issue_name"));
-                                issue.setThumbnail_url(obj.getString("image_path"));
+                                issue.setImage_url(obj.getString("image_path"));
                                 issue.setLocation(obj.getString("location_name"));
                                 issue.setDate(obj.getString("date_reported"));
                                 issue.setTime(obj.getString("time_reported"));
