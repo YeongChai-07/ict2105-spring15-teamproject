@@ -8,7 +8,6 @@
     <string name="page_name_view">View Issue</string>
     <string name="title_activity_settings">Contact Setting</string>
 
-    <string name="action_new_issue">Report issue</string>
     <string name="list_empty">No data is loaded.</string>
 
     <string name="header_issue">Report an issue</string>
@@ -51,5 +50,7 @@
     <string name="label_status">Status: </string>
     <string name="label_status_comment">Status Comment: </string>
 
+    <string name="action_new_issue">Report issue</string>
+    <string name="action_refresh">Refresh</string>
     <string name="action_settings">Settings</string>
 </resources>

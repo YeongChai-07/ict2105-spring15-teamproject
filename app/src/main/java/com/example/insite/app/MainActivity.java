@@ -33,7 +33,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      */
     ViewPager mViewPager;
 
-    final String TAG = "MainActivity";
+    final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,10 +103,16 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
                 return true;
 
+            // Refresh listview
+            case R.id.action_refresh:
+                refreshData();
+
+                return true;
+
             // Navigate to Report Issue Activity
             case R.id.action_add:
                 Intent newIssueIntent = new Intent(this, ReportIssueActivity.class);
-                this.startActivity(newIssueIntent);
+                this.startActivityForResult(newIssueIntent, 1);
 
                 return true;
         }
@@ -144,6 +150,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             // return PlaceholderFragment.newInstance(position + 1);
+
             return IssueListFragment.newInstance(position + 1);
         }
 
@@ -183,5 +190,44 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         this.startActivity(viewIssueIntent);
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult invoked");
+
+        super.onActivityResult(requestCode, resultCode, data);
+        // Check which request we're responding to
+        if (requestCode == 1) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                // The user picked a contact.
+                Log.d(TAG, "Result OK");
+                refreshData();
+            }
+            else if (resultCode == RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+    }
+
+    // A workaround way to get the instance fragments created
+    // Reference from http://stackoverflow.com/questions/18609261/getting-the-current-fragment-instance-in-the-viewpager
+    public void refreshData(){
+        //int index = mViewPager.getCurrentItem();
+
+        Fragment page1 = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":0");
+        Fragment page2 = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":1");
+        Fragment page3 = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":2");
+
+        if (page1 != null) {
+            ((IssueListFragment)page1).makeJsonObjectRequest();
+        }
+        if (page2 != null) {
+            ((IssueListFragment)page2).makeJsonObjectRequest();
+        }
+        if (page3 != null) {
+            ((IssueListFragment)page3).makeJsonObjectRequest();
+        }
     }
 }

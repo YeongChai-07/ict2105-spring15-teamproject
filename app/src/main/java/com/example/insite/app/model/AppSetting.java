@@ -11,6 +11,9 @@ public class AppSetting extends Application {
     public static String baseUrl = "http://192.168.1.5/insite/v1/issue";
     public static String imagePostUrl = "http://192.168.1.5/insite/v1/image";
 
+    //public static String baseUrl = "http://www.metalvilletrading.com.sg/insite/v1/issue";
+    //public static String imagePostUrl = "http://www.metalvilletrading.com.sg/insite/v1/image";
+
     private static AppSetting singleton;
 
     public static AppSetting getInstance() {

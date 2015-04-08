@@ -56,7 +56,7 @@ import java.util.Map;
 public class ReportIssueActivity extends ActionBarActivity {
 
     // Log tag
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = ReportIssueActivity.class.getSimpleName();
     private static final String CAMERA_TAG = "Camera Test";
     private static final String UPLOAD_TAG = "Image Upload";
 
@@ -80,6 +80,7 @@ public class ReportIssueActivity extends ActionBarActivity {
     final static String STATE_REPORTER = "reporter";
     final static String STATE_EMAIL = "email";
     final static String STATE_CONTACT = "contact";
+    final static String STATE_IMAGEFILE_URI = "imageURI";
 
     final String SUBMIT_ISSUE_URL = AppSetting.baseUrl;
     final String UPLOAD_IMAGE_URL = AppSetting.imagePostUrl;
@@ -177,6 +178,7 @@ public class ReportIssueActivity extends ActionBarActivity {
             editDescription.setText(savedInstanceState.getString(STATE_DESC));
             spinnerUrgency.setSelection(savedInstanceState.getInt(STATE_URGENCY));
 
+            currentImageUri = savedInstanceState.getParcelable(STATE_IMAGEFILE_URI);
             // Have to comment out the code, otherwise the latest SharedPref setting won't take in effect
             //editReporter.setText(savedInstanceState.getString(STATE_REPORTER));
             //editEmail.setText(savedInstanceState.getString(STATE_EMAIL));
@@ -300,10 +302,17 @@ public class ReportIssueActivity extends ActionBarActivity {
 
             } else if (resultCode == RESULT_CANCELED) {
                 // User cancelled the image capture
+                Log.d(CAMERA_TAG, "Camera being cancelled");
+                currentImagePath = "";
+
             } else {
                 // Image capture failed, advise user
+                currentImagePath = "";
             }
         }
+
+        //update the issue object if there should be an image path
+        newIssue.setImage_url(currentImagePath);
     }
 
 
@@ -319,6 +328,10 @@ public class ReportIssueActivity extends ActionBarActivity {
 
                 mtoastMsg = "Thank you for reporting the issue!";
                 Toast.makeText(ReportIssueActivity.this, mtoastMsg, Toast.LENGTH_LONG).show();
+
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("result", "success");
+                setResult(RESULT_OK, returnIntent);
 
                 // Return to the listview after form submission
                 finish();
@@ -357,7 +370,7 @@ public class ReportIssueActivity extends ActionBarActivity {
                 issueMap.put("location_name", issue.getLocation() );
 
                 // if there is photo being captured
-                if( !issue.getImage_url().toString().isEmpty() )
+                if( !issue.getImage_url().isEmpty() )
                     issueMap.put("image_path", issue.getImage_url());
 
                 issueMap.put("date_reported", issue.getDate());
@@ -401,17 +414,16 @@ public class ReportIssueActivity extends ActionBarActivity {
                 public void onResponse(String s) {
                     Log.d(UPLOAD_TAG, "Success");
                     pDialog.dismiss();
-                    mtoastMsg = "Image has been uploaded successfully.";
-                    Toast.makeText(ReportIssueActivity.this, mtoastMsg, Toast.LENGTH_LONG).show();
+
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
-                    //Log.d(UPLOAD_TAG, "Failed");
                     VolleyLog.d(UPLOAD_TAG, "Error: " + volleyError.getMessage());
-
+                    pDialog.dismiss();
                     mtoastMsg = "Image has failed to upload.";
                     Toast.makeText(ReportIssueActivity.this, mtoastMsg, Toast.LENGTH_LONG).show();
+
                 }
             }, new MultipartRequest.MultipartProgressListener() {
                 @Override
@@ -491,6 +503,7 @@ public class ReportIssueActivity extends ActionBarActivity {
         savedInstanceState.putString(STATE_REPORTER, editReporter.getText().toString());
         savedInstanceState.putString(STATE_EMAIL, editEmail.getText().toString());
         savedInstanceState.putString(STATE_CONTACT, editContact.getText().toString());
+        savedInstanceState.putParcelable(STATE_IMAGEFILE_URI, currentImageUri);
 
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);

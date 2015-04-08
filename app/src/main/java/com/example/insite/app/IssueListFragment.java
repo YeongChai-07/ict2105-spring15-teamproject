@@ -39,7 +39,7 @@ import java.util.Map;
 public class IssueListFragment extends ListFragment {
 
     // Log tag
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = IssueListFragment.class.getSimpleName();
 
     // Authorisation token
     private static final String token = AppSetting.APItoken;
@@ -85,12 +85,28 @@ public class IssueListFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Log.d(TAG, "onCreate called");
+
         if (getArguments() != null) {
             mTabPosition = getArguments().getInt(ARG_TAB);
         }
 
+        // Get the listview loaded with JSON from network
+        makeJsonObjectRequest();
+
+    }
+
+    /**
+     * Method to make json object request where json response starts wtih {
+     * */
+    public void makeJsonObjectRequest() {
+
         // Issue json url
         switch(mTabPosition){
+            case 0: //Should not exist
+                Log.d(TAG, "Tab Position 0 is passed in");
+                break;
+
             case 1: //Get all Pending issue
                 url = baseUrl + "/status/pending";
                 break;
@@ -107,6 +123,9 @@ public class IssueListFragment extends ListFragment {
                 //do nothing
                 break;
         }
+
+        // reinitialise a new ArrayList to remove existing items.
+        issueList = new ArrayList<Issue>();
 
         // Set an Adapter to the ListView
         adapter = new CustomListAdapter(getActivity(), issueList);
@@ -135,8 +154,8 @@ public class IssueListFragment extends ListFragment {
                         try {
                             JSONArray issueArray = response.getJSONArray("issue");
                             Log.d(TAG, issueArray.toString());
-                        // Parsing json
-                        for (int i = 0; i < issueArray.length(); i++) {
+                            // Parsing json
+                            for (int i = 0; i < issueArray.length(); i++) {
 
                                 JSONObject obj = issueArray.getJSONObject(i);
 
@@ -160,11 +179,14 @@ public class IssueListFragment extends ListFragment {
                                 // adding issue to issue array
                                 issueList.add(issue);
 
-                        }
-                            } catch (JSONException e) {
-                            e.printStackTrace();
-                            }
+                                Log.d(TAG, "Title: " + obj.getString("issue_name") );
 
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        Log.d("TAG", "Reaching notifyDataSetChange method");
                         // notifying list adapter about data changes
                         // so that it renders the list view with updated data
                         adapter.notifyDataSetChanged();
@@ -188,9 +210,7 @@ public class IssueListFragment extends ListFragment {
 
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(issueReq);
-
     }
-
 
     @Override
     public void onAttach(Activity activity) {
@@ -238,6 +258,11 @@ public class IssueListFragment extends ListFragment {
         public void onFragmentInteraction(int id, Parcelable issueObj);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume called");
+    }
 
     @Override
     public void onDestroy() {

@@ -102,7 +102,14 @@ public class CustomListAdapter extends BaseAdapter {
 
         // thumbnail image
         if(m.getImage_url().length() > 0 && !m.getImage_url().equals("null") ) {
-            thumbNail.setImageUrl(m.getImage_url(), imageLoader);
+            // Usually MalformedURLException will be thrown if it's invalid URL format
+            // but that has been handled inside the network class
+            try {
+                thumbNail.setImageUrl(m.getImage_url(), imageLoader);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
             // set an error thumbnail image in case if the image URL is invalid or inaccessible
             thumbNail.setErrorImageResId(R.drawable.sit_logo_black);
         }

@@ -2,135 +2,181 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/scrollview_view_issue"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="15dp">
 
-    <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent" android:layout_height="match_parent"
-        android:numColumns="auto_fit"
-        android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp"
-        android:stretchMode="none"
-        android:gravity="center"
-        android:columnCount="2"
-        android:padding="15dp">
+        android:orientation="horizontal"
+        >
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="0.5">
 
         <TextView
             android:text="@string/label_issue_title"
-            android:layout_column="0"
-            style="@style/formLabelStyle" />
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_column="1"
-            />
-
+            style="@style/formLabelStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
         <TextView
             android:text="@string/label_date"
-            android:layout_column="0"
-            style="@style/formLabelStyle"/>
-        <TextView
-            android:id="@+id/tv_date"
-            android:layout_column="1"
-            />
 
+            style="@style/formLabelStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
         <TextView
             android:text="@string/label_time"
-            android:layout_column="0"
-            style="@style/formLabelStyle"/>
-        <TextView
-            android:id="@+id/tv_time"
-            android:layout_column="1"
-            />
+            style="@style/formLabelStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:text="@string/label_location"
-            android:layout_column="0"
-            style="@style/formLabelStyle"/>
+            style="@style/formLabelStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:orientation="vertical" android:layout_weight="0.5"
+        >
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_column="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_column="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_column="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
         <TextView
             android:id="@+id/tv_location"
             android:layout_column="1"
-            />
-
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
         <!-- Image -->
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/img_issue"
             android:layout_width="wrap_content"
             android:layout_height="300dp"
-            android:layout_alignParentLeft="true"
-            android:layout_marginRight="8dp" />
+ />
 
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
         <TextView
             android:text="@string/label_description"
-            android:layout_column="0"
+
             style="@style/formLabelStyle"
-            />
-        <TextView
-            android:id="@+id/tv_description"
-            android:layout_column="1"
-            android:layout_width="wrap_content" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
 
         <TextView
             android:text="@string/label_urgency"
-            android:layout_column="0"
+
             style="@style/formLabelStyle"
-            />
-        <TextView
-            android:id="@+id/tv_urgency"
-            android:layout_column="1"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
 
         <TextView
             android:text="@string/label_reporter"
-            android:layout_column="0"
-            style="@style/formLabelStyle"
-            />
-        <TextView
-            android:id="@+id/tv_reporter"
-            android:layout_column="1"
 
-            />
+            style="@style/formLabelStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
 
         <TextView
             android:text="@string/label_email"
-            android:layout_column="0"
+
             style="@style/formLabelStyle"
-            />
-        <TextView
-            android:id="@+id/tv_email"
-            android:layout_column="1"
-            android:layout_height="wrap_content"
-            android:singleLine="false"
-            android:layout_width="match_parent" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
 
         <TextView
             android:text="@string/label_contact"
             style="@style/formLabelStyle"
-            android:layout_column="0"
-            />
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/tv_contact"
-            android:layout_column="1"
-            />
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
 
         <TextView
             android:text="@string/label_status"
             style="@style/formLabelStyle"
-            android:layout_column="0"
-            />
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/tv_status"
-            android:layout_column="1"
-            />
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
 
         <TextView
             android:text="@string/label_status_comment"
             style="@style/formLabelStyle"
-            android:layout_column="0"
-            />
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/tv_status_comment"
-            android:layout_column="1"
-            />
-    </GridLayout>
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        </LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:id="@+id/tv_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/tv_urgency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_reporter"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_email"
+
+            android:layout_height="wrap_content"
+            android:singleLine="false"
+            android:layout_width="match_parent" />
+        </LinearLayout>
+
+
+</LinearLayout>
 </ScrollView>
