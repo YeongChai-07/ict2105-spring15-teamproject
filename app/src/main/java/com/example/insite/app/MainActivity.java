@@ -97,12 +97,16 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         //noinspection SimplifiableIfStatement
         switch(id) {
             case R.id.action_settings:
+                Intent settingIntent = new Intent();
+                settingIntent.setClass(this, SetPreferenceActivity.class);
+                startActivity(settingIntent);
+
                 return true;
 
+            // Navigate to Report Issue Activity
             case R.id.action_add:
                 Intent newIssueIntent = new Intent(this, ReportIssueActivity.class);
                 this.startActivity(newIssueIntent);
-                //overridePendingTransition(R.anim.right_enter, R.anim.left_exit);
 
                 return true;
         }
@@ -167,13 +171,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public void onFragmentInteraction(int id, Parcelable issueObj){
         Log.i(TAG, "onFragmentInteraction item: " + String.valueOf(id) );
 
-        //get reference to the country Object
+        //get reference to the issue Object
         //Issue issue = (Issue) issue.getTag();
 
         Intent viewIssueIntent = new Intent(this, ViewIssueActivity.class);
-        //viewIssueIntent.putExtra("issue_id", id);
+
         Bundle b = new Bundle();
-        //pass the country object as a parcel
+        //pass the issue object as a parcel
         b.putParcelable("issue_obj", issueObj);
         viewIssueIntent.putExtras(b);
 

@@ -2,11 +2,12 @@ package com.example.insite.app;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
@@ -37,6 +38,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.insite.app.app.AppController;
 import com.example.insite.app.helper.CameraHelper;
 import com.example.insite.app.helper.Common;
+import com.example.insite.app.helper.DebouncedOnClickListener;
 import com.example.insite.app.helper.MultipartRequest;
 import com.example.insite.app.model.AppSetting;
 import com.example.insite.app.model.Issue;
@@ -57,8 +59,6 @@ public class ReportIssueActivity extends ActionBarActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String CAMERA_TAG = "Camera Test";
     private static final String UPLOAD_TAG = "Image Upload";
-
-    private Context context;
 
     private EditText editTitle;
     private EditText editLocation;
@@ -98,8 +98,7 @@ public class ReportIssueActivity extends ActionBarActivity {
     Bitmap bMapScaled;
 
     String mtoastMsg = "";
-    boolean mIsSubmitted = false;
-    private ProgressDialog progress;
+    private ProgressDialog pDialog;
 
     Issue newIssue = new Issue();
 
@@ -110,6 +109,7 @@ public class ReportIssueActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_issue);
 
+        Log.d(TAG, "onCreate called");
         Common.setContext(getApplicationContext());
 
         // to setup touch outside listener for soft keyboard dismissal
@@ -133,9 +133,36 @@ public class ReportIssueActivity extends ActionBarActivity {
         editContact = (EditText) findViewById(R.id.edit_contact);
         btnSubmit = (Button) findViewById(R.id.button_submitIssue);
 
-        editTitle.clearFocus();
-        progress = new ProgressDialog(this);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
+        SharedPreferences.OnSharedPreferenceChangeListener listener =
+                new SharedPreferences.OnSharedPreferenceChangeListener() {
+                    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                        Log.d(TAG, "SharedPreference Listener Invoked");
+                        // listener implementation
+                        if (key.equals("name_preference")) {
+                            // Set summary to be the user-description for the selected value
+                            editReporter.setText(prefs.getString("name_preference", ""));
+                        }
+
+                        if (key.equals("email_preference")) {
+                            // Set summary to be the user-description for the selected value
+                            editEmail.setText(prefs.getString("email_preference", ""));
+                        }
+
+                        if (key.equals("contact_preference")) {
+                            // Set summary to be the user-description for the selected value
+                            editContact.setText(prefs.getString("contact_preference", ""));
+                        }
+                    }
+                };
+
+        sharedPref.registerOnSharedPreferenceChangeListener(listener);
+
+        editTitle.clearFocus();
+        pDialog = new ProgressDialog(this);
+
+        // initialise an empty URL for image
         newIssue.setImage_url("");
         // get default image
         bMapScaled = Common.setDefaultImage();
@@ -149,19 +176,29 @@ public class ReportIssueActivity extends ActionBarActivity {
             currentImagePath = savedInstanceState.getString(STATE_IMAGEPATH);
             editDescription.setText(savedInstanceState.getString(STATE_DESC));
             spinnerUrgency.setSelection(savedInstanceState.getInt(STATE_URGENCY));
-            editReporter.setText(savedInstanceState.getString(STATE_REPORTER));
-            editEmail.setText(savedInstanceState.getString(STATE_EMAIL));
-            editContact.setText(savedInstanceState.getString(STATE_CONTACT));
+
+            // Have to comment out the code, otherwise the latest SharedPref setting won't take in effect
+            //editReporter.setText(savedInstanceState.getString(STATE_REPORTER));
+            //editEmail.setText(savedInstanceState.getString(STATE_EMAIL));
+            //editContact.setText(savedInstanceState.getString(STATE_CONTACT));
 
             // if no image is captured
-                if(!currentImagePath.isEmpty() )
-                {
-                    bMapScaled = Common.handleImageFrom_PictureFile(currentImagePath);
-                }
+            if(!currentImagePath.isEmpty() )
+            {
+                bMapScaled = Common.handleImageFrom_PictureFile(currentImagePath);
+            }
 
         } else {
-            // Probably initialize members with default values for a new instance
 
+
+            String namePref = sharedPref.getString("name_preference", "");
+            String emailPref = sharedPref.getString("email_preference", "");
+            String contactPref = sharedPref.getString("contact_preference", "");
+
+            // Initialize members with default values from the SharedPreference
+            editReporter.setText(namePref);
+            editEmail.setText(emailPref);
+            editContact.setText(contactPref);
         }
 
 
@@ -172,25 +209,26 @@ public class ReportIssueActivity extends ActionBarActivity {
 
             @Override
             public void onClick(View v) {
-//                Intent cameraIntent = new Intent(getApplicationContext(), CameraActivity.class);
-//                startActivity(cameraIntent);
+
                 if (currentImageUri == null) {
                     mFileName = CameraHelper.generateFileName();
                     newIssue.setImage_url(mFileName);
                     currentImageUri = CameraHelper.getImageFileUri(imageFile, mFileName);
                 }
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, currentImageUri); // set the image file name
+                // set the image file name
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, currentImageUri);
                 // start the image capture Intent
                 startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
             }
 
         });
 
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
+        // Use abstract class helper to prevent multiple click on the button within 1 sec limit.
+        btnSubmit.setOnClickListener(new DebouncedOnClickListener(1000) {
 
             @Override
-            public void onClick(View v) {
+            public void onDebouncedClick(View v) {
 
 
                 if (Common.isInputEmpty(editTitle.getText().toString())) {
@@ -237,21 +275,20 @@ public class ReportIssueActivity extends ActionBarActivity {
 
                 submitIssue(newIssue);
 
-
             }
 
         });
     }
 
 
-    //TODO: For use to return the result back from the camera Intent Service
+    // Return the result back from the camera Intent Service
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(CAMERA_TAG, "Entered onActivityResult method");
 
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                Log.d(CAMERA_TAG, "Trying to save image!");
+                Log.d(CAMERA_TAG, "Saving image...");
                 CameraHelper.galleryAddPic(currentImageUri, this);
 
                 currentImagePath= currentImageUri.getPath();
@@ -282,6 +319,8 @@ public class ReportIssueActivity extends ActionBarActivity {
 
                 mtoastMsg = "Thank you for reporting the issue!";
                 Toast.makeText(ReportIssueActivity.this, mtoastMsg, Toast.LENGTH_LONG).show();
+
+                // Return to the listview after form submission
                 finish();
             }
 
@@ -290,21 +329,21 @@ public class ReportIssueActivity extends ActionBarActivity {
             public void onErrorResponse(VolleyError error)
             {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
-                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                    //Toast.makeText(context,
-                    //        context.getString(R.string.error_network_timeout),
-                    //        Toast.LENGTH_LONG).show();
-                } else if (error instanceof AuthFailureError) {
-                    //
-                } else if (error instanceof ServerError) {
-                    //
-                } else if (error instanceof NetworkError) {
-                    //
-                } else if (error instanceof ParseError) {
-                    //
-                }
 
                 mtoastMsg = "Sorry, the form failed to submit.";
+
+                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                    mtoastMsg = "There seems to be a connection error.";
+                } else if (error instanceof AuthFailureError) {
+                    // retain same error msg
+                } else if (error instanceof ServerError) {
+                    mtoastMsg = "An error has occurred in the server.";
+                } else if (error instanceof NetworkError) {
+                    mtoastMsg = "There seems to be a problem with the network.";
+                } else if (error instanceof ParseError) {
+                    // retain same error msg
+                }
+
                 Toast.makeText(ReportIssueActivity.this, mtoastMsg, Toast.LENGTH_LONG).show();
             }
         }
@@ -317,6 +356,7 @@ public class ReportIssueActivity extends ActionBarActivity {
                 issueMap.put("description", issue.getDescription() );
                 issueMap.put("location_name", issue.getLocation() );
 
+                // if there is photo being captured
                 if( !issue.getImage_url().toString().isEmpty() )
                     issueMap.put("image_path", issue.getImage_url());
 
@@ -338,25 +378,29 @@ public class ReportIssueActivity extends ActionBarActivity {
             }
         };
 
+        // Add the form post request to queue
         AppController.getInstance().addToRequestQueue(submitIssue_Req);
 
+        // if there is photo being captured
         if( !currentImagePath.isEmpty() )
         {
-
-
-            progress.setMessage("Uploading Image :) ");
-            progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            progress.setIndeterminate(true);
-            progress.show();
+            // Show up progress dialog
+            pDialog.setMessage("Uploading Image :) ");
+            pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            pDialog.setIndeterminate(true);
+            pDialog.show();
 
             File sourceFile = new File(currentImagePath);
+
+            // An empty hash map as there is no form parameters to post
             Map<String, String> stringMap = new HashMap<String, String>();
 
+            // Starts to upload the image
             uploadFile("uploadTag", UPLOAD_IMAGE_URL, sourceFile, "image_file", stringMap, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String s) {
                     Log.d(UPLOAD_TAG, "Success");
-                    progress.dismiss();
+                    pDialog.dismiss();
                     mtoastMsg = "Image has been uploaded successfully.";
                     Toast.makeText(ReportIssueActivity.this, mtoastMsg, Toast.LENGTH_LONG).show();
                 }
@@ -373,29 +417,29 @@ public class ReportIssueActivity extends ActionBarActivity {
                 @Override
                 public void transferred(long transfered, int progressTime) {
                     Log.d(UPLOAD_TAG, "In Progress - " + String.valueOf(progressTime) );
-                    progress.setProgress(progressTime);
+                    pDialog.setProgress(progressTime);
                 }
             });
         }
 
     }
 
+    /**
+     * Helper method for sending Multipart Request to upload file
+     */
     protected <T> void uploadFile(final String tag, final String url,
                                   final File file, final String partName,
                                   final Map<String, String> headerParams,
                                   final Response.Listener<String> resultDelivery,
                                   final Response.ErrorListener errorListener,
                                   MultipartRequest.MultipartProgressListener progListener) {
-        //AZNetworkRetryPolicy retryPolicy = new AZNetworkRetryPolicy();
 
         MultipartRequest mr = new MultipartRequest(url, errorListener,
                 resultDelivery, file, file.length(), null, headerParams,
                 partName, progListener);
 
-        //mr.setRetryPolicy(retryPolicy);
         mr.setTag(tag);
 
-        //Volley.newRequestQueue(this).add(mr);
         AppController.getInstance().addToRequestQueue(mr);
     }
 
@@ -441,7 +485,7 @@ public class ReportIssueActivity extends ActionBarActivity {
     {
         savedInstanceState.putString(STATE_ISSUENAME, editTitle.getText().toString());
         savedInstanceState.putString(STATE_LOCATION, editLocation.getText().toString());
-        savedInstanceState.putString(STATE_IMAGEPATH, currentImagePath.toString() );
+        savedInstanceState.putString(STATE_IMAGEPATH, currentImagePath );
         savedInstanceState.putString(STATE_DESC, editDescription.getText().toString());
         savedInstanceState.putInt(STATE_URGENCY, spinnerUrgency.getSelectedItemPosition());
         savedInstanceState.putString(STATE_REPORTER, editReporter.getText().toString());
@@ -451,6 +495,8 @@ public class ReportIssueActivity extends ActionBarActivity {
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -471,9 +517,27 @@ public class ReportIssueActivity extends ActionBarActivity {
                 return true;
 
             case R.id.action_settings:
+                Intent settingIntent = new Intent();
+                settingIntent.setClass(this, SetPreferenceActivity.class);
+                startActivity(settingIntent);
                 return true;
 
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume called");
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy called");
+        Common.hidePDialog(pDialog);
+    }
+
 }

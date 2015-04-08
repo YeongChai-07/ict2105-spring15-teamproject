@@ -52,6 +52,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.insite.app.MainActivity" />
         </activity>
+
+        <activity
+            android:name=".SetPreferenceActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
     </application>
 
 </manifest>

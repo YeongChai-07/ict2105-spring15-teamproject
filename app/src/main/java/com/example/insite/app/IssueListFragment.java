@@ -17,6 +17,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.insite.app.adapter.CustomListAdapter;
 import com.example.insite.app.app.AppController;
+import com.example.insite.app.helper.Common;
 import com.example.insite.app.model.AppSetting;
 import com.example.insite.app.model.Issue;
 
@@ -129,7 +130,7 @@ public class IssueListFragment extends ListFragment {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, response.toString());
-                        hidePDialog();
+                        Common.hidePDialog(pDialog);
 
                         try {
                             JSONArray issueArray = response.getJSONArray("issue");
@@ -172,7 +173,7 @@ public class IssueListFragment extends ListFragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
-                hidePDialog();
+                Common.hidePDialog(pDialog);
 
             }
         }){
@@ -233,7 +234,7 @@ public class IssueListFragment extends ListFragment {
      * activity.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
+
         public void onFragmentInteraction(int id, Parcelable issueObj);
     }
 
@@ -241,14 +242,7 @@ public class IssueListFragment extends ListFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        hidePDialog();
-    }
-
-    private void hidePDialog() {
-        if (pDialog != null) {
-            pDialog.dismiss();
-            pDialog = null;
-        }
+        Common.hidePDialog(pDialog);
     }
 
 }

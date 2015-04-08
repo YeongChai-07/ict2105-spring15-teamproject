@@ -2,6 +2,7 @@ package com.example.insite.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -81,7 +82,7 @@ public class ViewIssueActivity extends ActionBarActivity {
             imageIssue.setErrorImageResId(R.drawable.sit_logo_black);
         }
         else{
-            //imageIssue.setDefaultImageResId(R.drawable.sit_logo);
+            imageIssue.setDefaultImageResId(R.drawable.sit_logo);
         }
     }
 
@@ -104,7 +105,15 @@ public class ViewIssueActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         switch(id) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+
             case R.id.action_settings:
+                Intent settingIntent = new Intent();
+                settingIntent.setClass(this, SetPreferenceActivity.class);
+                startActivity(settingIntent);
                 return true;
 
             case R.id.action_add:

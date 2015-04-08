@@ -1,5 +1,6 @@
 package com.example.insite.app.helper;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,11 +21,14 @@ import java.util.TimeZone;
 public class Common {
     private static Context context;
 
-    public static void setContext(Context mcontext) {
+    public static void setContext(Context mContext) {
         if (context == null)
-            context = mcontext;
+            context = mContext;
     }
 
+    /*
+    * Get current date in "yyyy-MM-dd" format
+    */
     public static String getTodayDate()
     {
         TimeZone currZone = TimeZone.getTimeZone("Asia/Singapore");
@@ -36,6 +40,9 @@ public class Common {
         return ( sdf.format(myCal.getTime()) );
     }
 
+    /*
+    * Get current time in "HH:mm:ss" format
+    */
     public static String getCurrentTime()
     {
         TimeZone currZone = TimeZone.getTimeZone("Asia/Singapore");
@@ -46,15 +53,19 @@ public class Common {
         return timeNow;
     }
 
-
+    /*
+    * Check if the string contains empty space or empty line
+    */
     public static boolean isInputEmpty(String stringToCheck)
     {
-        //stringToCheck.trim();
         stringToCheck = stringToCheck.replaceAll(" ", "");
         stringToCheck = stringToCheck.replaceAll("\n", "");
         return stringToCheck.isEmpty();
     }
 
+    /*
+    * Scale image with the restriction of the max Width and Height with respect to Aspect Ratio
+    */
     private static Bitmap resize(Bitmap image, int maxWidth, int maxHeight) {
         if (maxHeight > 0 && maxWidth > 0) {
             int width = image.getWidth();
@@ -134,4 +145,15 @@ public class Common {
         }
         return bitmap;
     }
+
+
+    /*
+    * Hide ProgressDialog if it exists
+    */
+    public static void hidePDialog(ProgressDialog pDialog) {
+        if (pDialog != null) {
+            pDialog.dismiss();
+        }
+    }
+
 }

@@ -66,15 +66,10 @@ public class MultipartRequest extends Request<String> {
         httpentity = entity.build();
     }
 
-    // public void addStringBody(String param, String value) {
-    // if (mStringPart != null) {
-    // mStringPart.put(param, value);
-    // }
-    // }
 
     private void buildMultipartEntity() {
         entity.addPart(FILE_PART_NAME, new FileBody(mFilePart, ContentType.create("image/jpeg"), mFilePart.getName()) );
-        //entity.addPart("image_file", new FileBody(mFilePart, ContentType.create("image/jpeg"), mFilePart.getName()) );
+
         if (mStringPart != null) {
             for (Map.Entry<String, String> entry : mStringPart.entrySet()) {
                 entity.addTextBody(entry.getKey(), entry.getValue());
@@ -118,7 +113,6 @@ public class MultipartRequest extends Request<String> {
         mListener.onResponse(response);
     }
 
-    //Override getHeaders() if you want to put anything in header
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
         Map<String, String> headers = super.getHeaders();
@@ -128,7 +122,6 @@ public class MultipartRequest extends Request<String> {
             headers = new HashMap<String, String>();
         }
         headers.put("Authorization", AppSetting.APItoken);
-        //headers.put("Accept", "image/jpeg");
 
         return headers;
     }

@@ -16,6 +16,9 @@ import java.util.Date;
  */
 public class CameraHelper {
 
+    /**
+     * Generate file name for the image captured based on timestamp
+     */
     public static String generateFileName(){
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -24,6 +27,9 @@ public class CameraHelper {
         return fileName;
     }
 
+    /**
+     * Get the URI where the image is stored in phone directory
+     */
     public static Uri getImageFileUri(File imageFile, String newFileName) {
 
         final String CAMERA_TAG = "getImageFileUri Method: ";
@@ -56,15 +62,14 @@ public class CameraHelper {
             }
         }
 
-        //return image;
-        // Create an File Uri
+        // Create a File Uri
         return Uri.fromFile(image);
     }
 
+    /**
+     * copy current image to Gallery
+     */
     public static void galleryAddPic(Uri currentImageUri, Activity activity) {
-        /**
-         * copy current image to Gallery
-         */
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         mediaScanIntent.setData(currentImageUri);
         activity.sendBroadcast(mediaScanIntent);
