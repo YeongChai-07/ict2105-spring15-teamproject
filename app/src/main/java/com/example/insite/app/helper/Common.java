@@ -1,5 +1,6 @@
 package com.example.insite.app.helper;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,6 +8,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.util.Patterns;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.example.insite.app.R;
 
@@ -49,8 +55,9 @@ public class Common {
     {
         TimeZone currZone = TimeZone.getTimeZone("Asia/Singapore");
         Calendar myCal = Calendar.getInstance(currZone, new Locale("en"));
-        String timeNow = String.format("%02d", myCal.get(myCal.HOUR_OF_DAY) ) + ":" + String.format("%02d", myCal.get(myCal.MINUTE) )
-                + ":" + String.format("%02d", myCal.get(myCal.SECOND));
+        String timeNow = String.format("%02d", myCal.get(Calendar.HOUR_OF_DAY) )
+                + ":" + String.format("%02d", myCal.get(Calendar.MINUTE) )
+                + ":" + String.format("%02d", myCal.get(Calendar.SECOND));
 
         return timeNow;
     }
@@ -69,6 +76,51 @@ public class Common {
         Pattern pattern = Patterns.EMAIL_ADDRESS;
         return pattern.matcher(email).matches();
     }
+
+
+    /**
+     * Hides virtual keyboard
+     *
+     */
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+
+        try{
+            inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+        }
+        catch (NullPointerException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void setupUI(View view, final Activity activity) {
+
+        //Set up touch listener for non-text box views to hide keyboard.
+        if(!(view instanceof EditText)) {
+
+            view.setOnTouchListener(new View.OnTouchListener() {
+
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard(activity);
+                    return false;
+                }
+
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+
+                View innerView = ((ViewGroup) view).getChildAt(i);
+
+                setupUI(innerView, activity);
+            }
+        }
+    }
+
+
     /*
     * Scale image with the restriction of the max Width and Height with respect to Aspect Ratio
     */
