@@ -267,8 +267,7 @@ public class ReportIssueActivity extends ActionBarActivity {
                     return;
                 }
                 // if email is in invalid format
-                else if ( !editEmail.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+\\\\.+[a-z]+") )
-                {
+                else if (!Common.isValidEmail(editEmail.getText().toString())) {
                     editEmail.requestFocus();
                     editEmail.setError(EMAIL_ERROR_INVALID_MSG);
                     return;

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.util.Patterns;
 
 import com.example.insite.app.R;
 
@@ -14,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 
 /**
  * Created by Xing Yi on 8/4/2015.
@@ -63,6 +65,10 @@ public class Common {
         return stringToCheck.isEmpty();
     }
 
+    public static boolean isValidEmail(String email) {
+        Pattern pattern = Patterns.EMAIL_ADDRESS;
+        return pattern.matcher(email).matches();
+    }
     /*
     * Scale image with the restriction of the max Width and Height with respect to Aspect Ratio
     */
