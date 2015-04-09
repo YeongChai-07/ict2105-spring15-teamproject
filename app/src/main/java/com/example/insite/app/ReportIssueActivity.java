@@ -108,9 +108,8 @@ public class ReportIssueActivity extends ActionBarActivity {
     {
         // Always call the superclass first
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_issue);
+        setContentView(R.layout.activity_post_issue);
 
-        Log.d(TAG, "onCreate called");
         Common.setContext(getApplicationContext());
 
         // to setup touch outside listener for soft keyboard dismissal
@@ -122,6 +121,7 @@ public class ReportIssueActivity extends ActionBarActivity {
         final String ISSUE_DESC_ERROR_MSG = getResources().getString(R.string.error_description);
         final String REPORTER_ERROR_MSG = getResources().getString(R.string.error_reporter);
         final String EMAIL_ERROR_MSG = getResources().getString(R.string.error_email);
+        final String EMAIL_ERROR_INVALID_MSG = getResources().getString(R.string.error_invald_email);
 
         editTitle = (EditText) findViewById(R.id.edit_title);
         editLocation = (EditText) findViewById(R.id.edit_location);
@@ -158,9 +158,9 @@ public class ReportIssueActivity extends ActionBarActivity {
                     }
                 };
 
+        // Keep track of whenever there's changes in the setting menu
         sharedPref.registerOnSharedPreferenceChangeListener(listener);
 
-        editTitle.clearFocus();
         pDialog = new ProgressDialog(this);
 
         // initialise an empty URL for image
@@ -232,28 +232,51 @@ public class ReportIssueActivity extends ActionBarActivity {
             @Override
             public void onDebouncedClick(View v) {
 
+                //*
+                /* Form Validation - Start
+                */
+                editTitle.setError(null);
+                editLocation.setError(null);
+                editDescription.setError(null);
+                editReporter.setError(null);
+                editEmail.setError(null);
 
                 if (Common.isInputEmpty(editTitle.getText().toString())) {
                     editTitle.requestFocus();
-                    editTitle.setError(TITLE_ERROR_MSG);    //Shows a error message label
+                    editTitle.setError(TITLE_ERROR_MSG);
                     return;
-
                 }
-
-                if (Common.isInputEmpty(editLocation.getText().toString())) {
+                else if (Common.isInputEmpty(editLocation.getText().toString())) {
                     editLocation.requestFocus();
-                    editLocation.setError(LOCATION_ERROR_MSG);    //Shows a error message label
+                    editLocation.setError(LOCATION_ERROR_MSG);
                     return;
                 }
-
-                if (Common.isInputEmpty(editDescription.getText().toString())) {
+                else if (Common.isInputEmpty(editDescription.getText().toString())) {
                     editDescription.requestFocus();
-                    editDescription.setError(ISSUE_DESC_ERROR_MSG);    //Shows a error message label
-
+                    editDescription.setError(ISSUE_DESC_ERROR_MSG);
                     return;
-
+                }
+                else if (Common.isInputEmpty(editReporter.getText().toString())) {
+                    editReporter.requestFocus();
+                    editReporter.setError(REPORTER_ERROR_MSG);
+                    return;
+                }
+                else if (Common.isInputEmpty(editEmail.getText().toString())) {
+                    editEmail.requestFocus();
+                    editEmail.setError(EMAIL_ERROR_MSG);
+                    return;
+                }
+                // if email is in invalid format
+                else if ( !editEmail.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+\\\\.+[a-z]+") )
+                {
+                    editEmail.requestFocus();
+                    editEmail.setError(EMAIL_ERROR_INVALID_MSG);
+                    return;
                 }
 
+                //*
+                /* Form Validation - End
+                */
 
                 String issueName = editTitle.getText().toString().trim();
                 String issueLocation = editLocation.getText().toString().trim();
@@ -262,7 +285,6 @@ public class ReportIssueActivity extends ActionBarActivity {
                 String reporter = editReporter.getText().toString().trim();
                 String email = editEmail.getText().toString().trim();
                 String contact = editContact.getText().toString().trim();
-
 
                 newIssue.setTitle(issueName);
                 newIssue.setDate(Common.getTodayDate());
@@ -274,9 +296,9 @@ public class ReportIssueActivity extends ActionBarActivity {
                 newIssue.setEmail(email);
                 newIssue.setContact(contact);
 
-
+                // Submit the form and return to ListView if successful,
+                // otherwise remain at the form
                 submitIssue(newIssue);
-
             }
 
         });
@@ -346,13 +368,13 @@ public class ReportIssueActivity extends ActionBarActivity {
                 mtoastMsg = "Sorry, the form failed to submit.";
 
                 if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                    mtoastMsg = "There seems to be a connection error.";
+                    mtoastMsg = "There seems to be a connection error. Please try again later.";
                 } else if (error instanceof AuthFailureError) {
                     // retain same error msg
                 } else if (error instanceof ServerError) {
                     mtoastMsg = "An error has occurred in the server.";
                 } else if (error instanceof NetworkError) {
-                    mtoastMsg = "There seems to be a problem with the network.";
+                    mtoastMsg = "There seems to be a problem with the network. Please try again later.";
                 } else if (error instanceof ParseError) {
                     // retain same error msg
                 }
@@ -514,7 +536,7 @@ public class ReportIssueActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_new_issue, menu);
+        getMenuInflater().inflate(R.menu.menu_issue, menu);
         return true;
     }
 

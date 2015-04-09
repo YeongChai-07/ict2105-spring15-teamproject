@@ -6,6 +6,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -82,14 +83,16 @@ public class ViewIssueActivity extends ActionBarActivity {
             imageIssue.setErrorImageResId(R.drawable.sit_logo_black);
         }
         else{
-            imageIssue.setDefaultImageResId(R.drawable.sit_logo);
+            //imageIssue.setDefaultImageResId(R.drawable.sit_logo);
+            // Remove the image view
+            imageIssue.setVisibility(View.GONE);
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_issue, menu);
         return true;
     }
 

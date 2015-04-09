@@ -50,14 +50,15 @@
             android:text="@string/button_capture_image"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="@dimen/editText_left_right_margin"
-            android:layout_marginRight="@dimen/editText_left_right_margin" />
+            android:layout_marginRight="@dimen/editText_left_right_margin"
+            android:background="@drawable/btn_blue"
+            style="@style/ButtonText"/>
 
         <ImageView
             android:id="@+id/issue_Image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            />
+            android:layout_centerHorizontal="true" />
 
         <View style="@style/divider" />
 
@@ -78,7 +79,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.3"
-                android:text="@string/label_urgency"
+                android:text="@string/form_label_urgency"
                 android:textSize="@dimen/form_fontsize"
                 android:layout_marginLeft="@dimen/form_left_margin" />
             <Spinner
@@ -140,6 +141,8 @@
             android:layout_centerHorizontal="true"
             android:layout_below="@id/multiLine_Description"
             android:layout_marginLeft="@dimen/editText_left_right_margin"
-            android:layout_marginRight="@dimen/editText_left_right_margin" />
+            android:layout_marginRight="@dimen/editText_left_right_margin"
+            android:background="@drawable/btn_green"
+            style="@style/SubmitButtonText"/>
     </LinearLayout>
 </ScrollView>

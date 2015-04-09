@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
@@ -18,6 +19,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.insite.app.adapter.CustomListAdapter;
 import com.example.insite.app.app.AppController;
 import com.example.insite.app.helper.Common;
+import com.example.insite.app.helper.ConnectionDetector;
 import com.example.insite.app.model.AppSetting;
 import com.example.insite.app.model.Issue;
 
@@ -91,8 +93,23 @@ public class IssueListFragment extends ListFragment {
             mTabPosition = getArguments().getInt(ARG_TAB);
         }
 
-        // Get the listview loaded with JSON from network
-        makeJsonObjectRequest();
+        ConnectionDetector cd = new ConnectionDetector(getActivity());
+
+        Boolean isInternetPresent = cd.isConnectingToInternet();
+
+        if(cd.isConnectingToInternet()) {
+            // Get the listview loaded with JSON from network
+            makeJsonObjectRequest();
+        }
+        else{
+            Toast.makeText(getActivity(), "There is no Internet Connection.", Toast.LENGTH_LONG).show();
+
+            // Set the list adapter with empty data so that the listview will not keep showing the progress indicator
+            issueList = new ArrayList<Issue>();
+            // Set an Adapter to the ListView
+            adapter = new CustomListAdapter(getActivity(), issueList);
+            setListAdapter(adapter);
+        }
 
     }
 
@@ -132,11 +149,6 @@ public class IssueListFragment extends ListFragment {
 
         setListAdapter(adapter);
 
-        // Set the emptyView to the ListView
-        //View emptyView = inflater.inflate(R.layout.misc_layout, null, false);
-        //getListView().setEmptyView(emptyView);
-        //setEmptyText("No Data Here");
-
         pDialog = new ProgressDialog(getActivity());
         // Showing progress dialog before making http request
         pDialog.setMessage("Loading...");
@@ -152,8 +164,10 @@ public class IssueListFragment extends ListFragment {
                         Common.hidePDialog(pDialog);
 
                         try {
+
                             JSONArray issueArray = response.getJSONArray("issue");
                             Log.d(TAG, issueArray.toString());
+
                             // Parsing json
                             for (int i = 0; i < issueArray.length(); i++) {
 
@@ -178,8 +192,6 @@ public class IssueListFragment extends ListFragment {
 
                                 // adding issue to issue array
                                 issueList.add(issue);
-
-                                Log.d(TAG, "Title: " + obj.getString("issue_name") );
 
                             }
                         } catch (JSONException e) {
@@ -262,6 +274,9 @@ public class IssueListFragment extends ListFragment {
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume called");
+
+        // Display message if no data is loaded onto the listview
+        setEmptyText("No Data is Loaded.");
     }
 
     @Override

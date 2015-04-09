@@ -1,182 +1,241 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollview_view_issue"
+    android:id="@+id/scrollview_report_issue"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="15dp">
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent" android:layout_height="match_parent"
-        android:orientation="horizontal"
-        >
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent" android:layout_height="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
         android:orientation="vertical"
-        android:layout_weight="0.5">
+        android:layout_width="match_parent" android:layout_height="match_parent">
 
         <TextView
-            android:text="@string/label_issue_title"
-            style="@style/formLabelStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="@string/header_issue"
+            style="@style/sectionHeader"
+            android:id="@+id/header_issue"
+            android:layout_marginBottom="@dimen/header_bottom_margin" />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <TextView
+                android:text="@string/label_issue_title"
+                style="@style/formLabelStyle"
+                android:layout_marginLeft="@dimen/editText_left_right_margin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/viewText_right_margin" />
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_column="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/editText_left_right_margin"/>
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <TextView
+                android:text="@string/label_location"
+                style="@style/formLabelStyle"
+                android:layout_marginLeft="@dimen/editText_left_right_margin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/viewText_right_margin" />
+            <TextView
+                android:id="@+id/tv_location"
+                android:layout_column="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/editText_left_right_margin"/>
+        </LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <TextView
+                android:text="@string/label_date"
+                style="@style/formLabelStyle"
+                android:layout_marginLeft="@dimen/editText_left_right_margin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/viewText_right_margin" />
+            <TextView
+                android:id="@+id/tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/editText_left_right_margin"/>
+        </LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <TextView
+                android:text="@string/label_time"
+                style="@style/formLabelStyle"
+                android:layout_marginLeft="@dimen/editText_left_right_margin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/viewText_right_margin" />
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/editText_left_right_margin"/>
+        </LinearLayout>
+
+
         <TextView
-            android:text="@string/label_date"
-
-            style="@style/formLabelStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:text="@string/label_time"
-            style="@style/formLabelStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="@string/header_detail"
+            style="@style/sectionHeader"
+            android:id="@+id/header_detail"
+            android:layout_marginTop="@dimen/header_top_margin"
+            android:layout_marginBottom="@dimen/header_bottom_margin" />
 
-        <TextView
-            android:text="@string/label_location"
-            style="@style/formLabelStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent" android:layout_height="match_parent"
-        android:orientation="vertical" android:layout_weight="0.5"
-        >
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_column="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-
-        <TextView
-            android:id="@+id/tv_date"
-            android:layout_column="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-
-        <TextView
-            android:id="@+id/tv_time"
-            android:layout_column="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-
-        <TextView
-            android:id="@+id/tv_location"
-            android:layout_column="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
         <!-- Image -->
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/img_issue"
-            android:layout_width="wrap_content"
-            android:layout_height="300dp"
- />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="@dimen/editText_left_right_margin"
+            android:layout_marginRight="@dimen/editText_left_right_margin" />
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent" android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
-        <TextView
-            android:text="@string/label_description"
-
-            style="@style/formLabelStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-
-        <TextView
-            android:text="@string/label_urgency"
-
-            style="@style/formLabelStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-
-        <TextView
-            android:text="@string/label_reporter"
-
-            style="@style/formLabelStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-
-        <TextView
-            android:text="@string/label_email"
-
-            style="@style/formLabelStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-
-        <TextView
-            android:text="@string/label_contact"
-            style="@style/formLabelStyle"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/tv_contact"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-
-        <TextView
-            android:text="@string/label_status"
-            style="@style/formLabelStyle"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/tv_status"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-
-        <TextView
-            android:text="@string/label_status_comment"
-            style="@style/formLabelStyle"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/tv_status_comment"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <TextView
+                android:text="@string/label_description"
+                style="@style/formLabelStyle"
+                android:layout_marginLeft="@dimen/editText_left_right_margin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/viewText_right_margin" />
+            <TextView
+                android:id="@+id/tv_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/editText_left_right_margin"/>
         </LinearLayout>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent" android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
-        <TextView
-            android:id="@+id/tv_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/tv_urgency"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/tv_reporter"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content" />
-
-        <TextView
-            android:id="@+id/tv_email"
-
-            android:layout_height="wrap_content"
-            android:singleLine="false"
-            android:layout_width="match_parent" />
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <TextView
+                android:text="@string/label_urgency"
+                style="@style/formLabelStyle"
+                android:layout_marginLeft="@dimen/editText_left_right_margin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/viewText_right_margin" />
+            <TextView
+                android:id="@+id/tv_urgency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/editText_left_right_margin"/>
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/header_contact"
+            style="@style/sectionHeader"
+            android:id="@+id/header_contact"
+            android:layout_marginBottom="@dimen/header_bottom_margin"
+            android:layout_marginTop="@dimen/header_top_margin" />
 
-</LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <TextView
+                android:text="@string/label_reporter"
+                style="@style/formLabelStyle"
+                android:layout_marginLeft="@dimen/editText_left_right_margin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/viewText_right_margin" />
+            <TextView
+                android:id="@+id/tv_reporter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/editText_left_right_margin"/>
+        </LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <TextView
+                android:text="@string/label_email"
+                style="@style/formLabelStyle"
+                android:layout_marginLeft="@dimen/editText_left_right_margin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/viewText_right_margin" />
+            <TextView
+                android:id="@+id/tv_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/editText_left_right_margin"/>
+        </LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <TextView
+                android:text="@string/label_contact"
+                style="@style/formLabelStyle"
+                android:layout_marginLeft="@dimen/editText_left_right_margin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/viewText_right_margin" />
+            <TextView
+                android:id="@+id/tv_contact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/editText_left_right_margin"/>
+        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/header_status"
+            style="@style/sectionHeader"
+            android:id="@+id/header_status"
+            android:layout_marginBottom="@dimen/header_bottom_margin"
+            android:layout_marginTop="@dimen/header_top_margin" />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <TextView
+                android:text="@string/label_status"
+                style="@style/formLabelStyle"
+                android:layout_marginLeft="@dimen/editText_left_right_margin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/viewText_right_margin" />
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/editText_left_right_margin"/>
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp">
+            <TextView
+                android:text="@string/label_status_comment"
+                style="@style/formLabelStyle"
+                android:layout_marginLeft="@dimen/editText_left_right_margin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/viewText_right_margin" />
+            <TextView
+                android:id="@+id/tv_status_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/editText_left_right_margin"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
 </ScrollView>

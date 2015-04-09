@@ -13,6 +13,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.example.insite.app.helper.ConnectionDetector;
 
 import java.util.Locale;
 
@@ -34,6 +37,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     ViewPager mViewPager;
 
     final String TAG = MainActivity.class.getSimpleName();
+
+    ConnectionDetector mCd = new ConnectionDetector(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,18 +99,31 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        Boolean isInternetPresent = mCd.isConnectingToInternet();
+
         //noinspection SimplifiableIfStatement
         switch(id) {
             case R.id.action_settings:
+
                 Intent settingIntent = new Intent();
                 settingIntent.setClass(this, SetPreferenceActivity.class);
                 startActivity(settingIntent);
+
+                if(!isInternetPresent) {
+                    Toast.makeText(this, "Please note that there is no Internet Connection.", Toast.LENGTH_SHORT).show();
+                }
 
                 return true;
 
             // Refresh listview
             case R.id.action_refresh:
-                refreshData();
+
+                if(isInternetPresent){
+                    refreshData();
+                }
+                else{
+                    Toast.makeText(this, "There is no Internet Connection.", Toast.LENGTH_SHORT).show();
+                }
 
                 return true;
 

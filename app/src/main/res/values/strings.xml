@@ -13,13 +13,14 @@
     <string name="header_issue">Report an issue</string>
     <string name="header_detail">Describe the issue</string>
     <string name="header_contact">Your contact</string>
+    <string name="header_status">Status</string>
 
     <string name="hint_issue_title">Issue Title</string>
     <string name="hint_location">Location</string>
-    <string name="label_urgency">Urgency</string>
+    <string name="form_label_urgency">Urgency</string>
     <string name="hint_reporter">Your Name</string>
     <string name="hint_email">Email</string>
-    <string name="hint_contact">Settings</string>
+    <string name="hint_contact">Contact</string>
 
     <string-array name="urgency_array">
         <item name="verylow_urgency">Very Low</item>
@@ -37,16 +38,18 @@
     <string name="error_location">Please provide a location name.</string>
     <string name="error_description">Please provide the description of the issue.</string>
     <string name="error_reporter">Please provide your name.</string>
-    <string name="error_email">Please ensure your email has the correct format.</string>
+    <string name="error_email">Please provide your email.</string>
+    <string name="error_invald_email">Please ensure your email is in the correct format.</string>
 
     <string name="label_issue_title">Title: </string>
     <string name="label_date">Date Reported: </string>
     <string name="label_time">Time Reported: </string>
     <string name="label_location">Location: </string>
     <string name="label_description">Description: </string>
-    <string name="label_reporter">Your Name: </string>
+    <string name="label_reporter">Reporter: </string>
     <string name="label_email">Email: </string>
     <string name="label_contact">Contact: </string>
+    <string name="label_urgency">Urgency: </string>
     <string name="label_status">Status: </string>
     <string name="label_status_comment">Status Comment: </string>
 

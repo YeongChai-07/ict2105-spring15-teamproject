@@ -127,7 +127,7 @@ public class CustomListAdapter extends BaseAdapter {
         viewHolder.urgency.setText("Urgency: " + m.getUrgency_level());
 
         switch(m.getUrgency_level()) {
-            case "Very high":
+            case "Very High":
                 viewHolder.urgency.setTextColor( activity.getResources().getColor(R.color.urgency_very_high) );
                 break;
             case "High":
@@ -139,8 +139,11 @@ public class CustomListAdapter extends BaseAdapter {
             case "Low":
                 viewHolder.urgency.setTextColor( activity.getResources().getColor(R.color.urgency_low) );
                 break;
-            case "Very low":
+            case "Very Low":
                 viewHolder.urgency.setTextColor( activity.getResources().getColor(R.color.urgency_very_low) );
+                break;
+            default:
+                viewHolder.urgency.setTextColor( activity.getResources().getColor(R.color.body_font) );
                 break;
         }
 

@@ -11,6 +11,7 @@
     <dimen name="form_fontsize">18dip</dimen>
     <dimen name="editText_left_right_margin">20dip</dimen>
     <dimen name="editText_top_bottom_margin">20dip</dimen>
+    <dimen name="viewText_right_margin">5dip</dimen>
     <dimen name="form_left_margin">23dip</dimen>
     <dimen name="header_top_margin">15dip</dimen>
     <dimen name="header_bottom_margin">15dip</dimen>
